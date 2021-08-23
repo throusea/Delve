@@ -1,0 +1,251 @@
+package view.component;
+
+import com.sun.javafx.geom.Vec2d;
+import controller.AnimationController;
+import javafx.beans.property.*;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Label;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import listener.RaceListener;
+import model.animation.*;
+import model.dice.Dice;
+import model.race.Mark;
+import model.race.Race;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
+
+import static util.BorderUtil.createBorder;
+
+public class RaceComponent extends Pane  {
+
+    private List<Mark> markList;
+
+    private Label healthLabel, damageLabel;
+
+    private Canvas canvas;
+
+    DoubleProperty centX, centY;
+
+    boolean selectDisabled;
+
+    BooleanProperty highlighted, isReadyAction, isDead;
+
+    BooleanProperty pressResponse, dragResponse;
+
+    RaceListener listener;
+
+    StringProperty diceString;
+
+    IntegerProperty health;
+
+    IntegerProperty damage;
+
+    public RaceComponent(int width, int height) {
+        setPrefSize(width, height);
+        setManaged(false);
+        setBorder(createBorder(Color.BLACK));
+
+        canvas = new Canvas();
+        canvas.setWidth(width);
+        canvas.setHeight(height);
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+        gc.setStroke(Color.BLACK);
+        gc.strokeRect(0,0,width, height);
+        healthLabel = new Label("HP");
+        healthLabel.setLayoutX(0);
+        healthLabel.setLayoutY(height);
+        damageLabel = new Label("DP");
+        damageLabel.setLayoutX(width);
+        damageLabel.setLayoutY(height);
+        this.getChildren().add(canvas);
+        this.getChildren().add(healthLabel);
+        this.getChildren().add(damageLabel);
+
+        centX = new SimpleDoubleProperty();
+        centY = new SimpleDoubleProperty();
+        centX.bind(layoutXProperty().add(width/2));
+        centY.bind(layoutYProperty().add(height/2));
+
+        markList = new ArrayList<>();
+        selectDisabled = true;
+        pressResponse = new SimpleBooleanProperty(false);
+        dragResponse = new SimpleBooleanProperty(false);
+
+        diceString = new SimpleStringProperty();
+        health = new SimpleIntegerProperty();
+        health.addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                if(oldValue.intValue() > newValue.intValue()) {
+                    AnimationController.addGameTime(new Quake(RaceComponent.this, 200));
+                    //new Quake(RaceComponent.this, 200).start();
+                }
+                healthLabel.setText(String.valueOf(newValue.intValue()));
+            }
+        });
+        damage = new SimpleIntegerProperty();
+        damage.addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                damageLabel.setText(String.valueOf(newValue.intValue()));
+            }
+        });
+        highlighted = new SimpleBooleanProperty();
+        highlighted.addListener((observable, oldValue, newValue) -> {
+            gc.clearRect(0,0,width,height);
+            gc.setStroke(newValue ? Color.RED : Color.BLACK);
+            gc.fillText(listener.toString(), 0, 30);
+            gc.strokeRect(0,0,width, height);
+            AnimationController.addGameTime(new FadeOut(RaceComponent.this, 200, true));
+            //new FadeOut(RaceComponent.this, 200, true).start();
+        });
+        isReadyAction = new SimpleBooleanProperty();
+        isReadyAction.addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                gc.clearRect(0,0,width,height);
+                gc.setStroke(newValue ? Color.YELLOW: Color.BLACK);
+                gc.fillText(listener.toString(), 0, 30);
+                gc.strokeRect(0,0,width, height);
+                AnimationController.addGameTime(new FadeOut(RaceComponent.this, 300, true));
+                //new FadeOut(RaceComponent.this, 300, true).start();
+            }
+        });
+        isDead = new SimpleBooleanProperty();
+        isDead.addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                gc.clearRect(0,0,width,height);
+                gc.setStroke(newValue ? Color.GRAY: Color.BLACK);
+                gc.fillText(listener.toString(), 0, 30);
+                gc.strokeRect(0,0,width, height);
+                selectDisabled = false;
+                setDisable(newValue);
+            }
+        });
+        addMouseListener();
+    }
+
+    public void addMouseListener() {
+        setOnDragDetected(e -> System.out.println("Detected"));
+        setOnMouseReleased(e -> System.out.println("Released"));
+        setOnDragExited(e -> System.out.println("Exit"));
+    }
+
+    public void addDice(DiceComponent dice) {
+        if(isReadyAction.get()) listener.setKeyDice(new Dice(dice.getDot()));
+        else {
+            if (diceString.get() == null) diceString.set(String.valueOf(dice.getDot()));
+            else diceString.set(diceString.get().concat(String.valueOf(dice.getDot())));
+        }
+        AnimationController.addGameTime(new DiceDisappear(dice, 500, false));
+        AnimationController.addGameTime(new Mover(dice, 500, new Vec2d(this.centX.get() - dice.getSize()/2, this.centY.get() - dice.getSize()/2)));
+    }
+
+    public void addMark(Mark mark) {
+        if(mark != null)
+        markList.add(mark);
+    }
+
+    public Mark getKeyMark() {
+        return listener.getKeyMark();
+    }
+
+    public boolean hasMarked(RaceComponent raceCpt) {
+        return raceCpt.markList.contains(listener.getKeyMark());
+    }
+
+    public void clearMark() {
+        markList.clear();
+    }
+
+    public boolean getPressResponse() { return pressResponse.get(); }
+
+    public boolean getDragResponse() { return dragResponse.get(); }
+
+    public void setPressResponse(boolean value) {
+        pressResponse.set(value);
+    }
+
+    public void setDragResponse(boolean dragResponse) {
+        this.dragResponse.set(dragResponse);
+    }
+
+    public double getCentX() {
+        return centX.get();
+    }
+
+    public double getCentY() {
+        return centY.get();
+    }
+
+    public int getHealth() {
+        return health.get();
+    }
+
+    public int getDamage() {
+        return damage.get();
+    }
+
+    public int getActionMode() {
+        return listener.getBasicActionMode();
+    }
+
+    public void setHealth(int health) {
+        listener.setHealth(health);
+    }
+
+    public void setDamage(int damage) {
+        this.damage.set(damage);
+    }
+
+    public boolean isHighlighted() { return highlighted.get(); }
+
+    public boolean isReadyAction() { return isReadyAction.get(); }
+
+    public void setIsReadyAction(boolean isReadyAction) {
+        this.isReadyAction.set(isReadyAction);
+    }
+
+    public void setPos(Vec2d vec2d) {
+        setPos(vec2d.x, vec2d.y);
+    }
+
+    public void setPos(double x, double y) {
+        setLayoutX(x);
+        setLayoutY(y);
+    }
+
+    public void setIsDead(boolean value) {
+        listener.setIsDead(value);
+    }
+
+    public void setSelectDisabled(boolean value) { selectDisabled = isDead.get() ? true : value; }
+
+    public void setHighlighted(boolean value) { highlighted.set(value); }
+
+    public boolean isSelectDisabled() { return selectDisabled; }
+
+    public boolean reduceActionCount() {
+        return listener.reduceActionCount();
+    }
+
+    public void registerListener(Race race) {
+        this.listener = race;
+        diceString.bindBidirectional(race.getDiceString());
+        health.bindBidirectional(race.getHealth());
+        damage.bind(race.getDamage());
+        isDead.bind(race.getDead());
+        canvas.getGraphicsContext2D().fillText(race.toString(), 0, 40);
+    }
+
+    public void unregisterListener(RaceListener listener) {
+        this.listener = null;
+    }
+}

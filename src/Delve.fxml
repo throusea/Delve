@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<StackPane fx:id="skPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="controller.GameController">
+    <BorderPane fx:id="gamePane">
+        <left>
+          <Pane fx:id="leftPane" prefHeight="200.0" prefWidth="50.0" BorderPane.alignment="CENTER"/>
+        </left>
+        <bottom>
+            <Pane fx:id="bottomPane" prefHeight="50.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                <Button fx:id="rollButton" layoutX="47.0" layoutY="9.0" mnemonicParsing="false"
+                        onMouseClicked="#roll" prefHeight="32.0" prefWidth="96.0" text="roll"/>
+                <Button layoutX="174.0" layoutY="9.0" mnemonicParsing="false" onMouseClicked="#nextStep"
+                        prefHeight="32.0" prefWidth="120.0" text="nextStage"/>
+            </Pane>
+        </bottom>
+        <right>
+            <Pane fx:id="rightPane" prefHeight="718.0" prefWidth="259.0" BorderPane.alignment="CENTER">
+                <Button fx:id="addButton" layoutX="19.0" layoutY="14.0" mnemonicParsing="false"
+                        onMouseClicked="#initStation" prefHeight="30.0" prefWidth="72.0" text="init"/>
+                <Button layoutX="19.0" layoutY="87.0" mnemonicParsing="false" onMouseClicked="#actionHandle"
+                        prefHeight="30.0" prefWidth="71.0" text="Cal"/>
+                <Button layoutX="130.0" layoutY="14.0" mnemonicParsing="false" onMouseClicked="#clearStation"
+                        text="clear"/>
+            </Pane>
+        </right>
+        <center>
+          <Pane fx:id="mainPane" prefHeight="718.0" prefWidth="1121.0" BorderPane.alignment="CENTER"/>
+        </center>
+        <top>
+            <MenuBar BorderPane.alignment="CENTER">
+                <Menu mnemonicParsing="false" text="File">
+                    <MenuItem mnemonicParsing="false" text="Close"/>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Edit">
+                    <MenuItem mnemonicParsing="false" text="Delete"/>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Help">
+                    <MenuItem mnemonicParsing="false" text="About"/>
+                </Menu>
+            </MenuBar>
+        </top>
+    </BorderPane>
+</StackPane>
