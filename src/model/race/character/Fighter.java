@@ -1,6 +1,9 @@
 package model.race.character;
 
+import model.race.action.Action;
 import model.race.Mark;
+import model.race.action.ActionMode;
+import model.race.action.GoalMode;
 
 public class Fighter extends Character{
 
@@ -8,8 +11,8 @@ public class Fighter extends Character{
 
     public Fighter() {
         super();
-        getMaxHealth().set(6);
-        getHealth().set(6);
+        setMaxHealth(6);
+        setHealth(6);
     }
 
     @Override
@@ -19,8 +22,9 @@ public class Fighter extends Character{
         for(int i = 0; i < s.length(); i++) {
             if(s.charAt(i) == '6') addActionCount();
         }
-        if(getActionCount().get() > 0) {
+        if(getActionCountProperty().get() > 0) {
             setDragResponse(true);
+            action = new Action(this, ActionMode.TO_ENEMY, GoalMode.SINGLE);
             return true;
         }
         return false;
@@ -29,13 +33,13 @@ public class Fighter extends Character{
     @Override
     public void reset() {
         super.reset();
-        getDamage().set(1);
-        getActionCount().set(0);
+        getDamageProperty().set(1);
+        getActionCountProperty().set(0);
     }
 
     @Override
-    public int getActionMode() {
-        return basicActionMode;
+    public int getSkillMode() {
+        return actionMode.intValue();
     }
 
     @Override
@@ -49,7 +53,7 @@ public class Fighter extends Character{
     }
 
     @Override
-    public String getCurrentMode() {
+    public String getSkillString() {
         return "Basic attack";
     }
 

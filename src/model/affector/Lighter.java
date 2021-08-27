@@ -24,15 +24,8 @@ public class Lighter extends Affector {
         this.value = value;
     }
 
-    @Override
-    protected Void call() throws Exception {
+    public void start() {
         if(raceGroup != null) raceGroup.setHighlight(value);
         if(race != null) race.setHighlight(value);
-        return null;
-    }
-
-    @Override
-    public void start() {
-        run();
     }
 }

@@ -18,13 +18,7 @@ public class HealthAffector extends Affector{
 
     @Override
     public void start() {
-        run();
-    }
-
-    @Override
-    protected Void call() throws Exception {
         if(race != null) race.setHealth(value);
         if(raceGroup != null) raceGroup.setHealth(value);
-        return null;
     }
 }

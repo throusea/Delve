@@ -6,7 +6,7 @@ import model.race.Race;
 import model.race.RaceGroup;
 import view.component.DiceComponent;
 
-public abstract class Affector extends Task<Void> {
+public abstract class Affector {
 
     RaceGroup raceGroup;
 
@@ -14,22 +14,13 @@ public abstract class Affector extends Task<Void> {
 
     Dice dice;
 
+    protected boolean permanent = false;
+
     double millis;
 
-//    public Affector(Race race, double millis) {
-//        this.race = race;
-//        this.millis = millis;
-//    }
-//
-//    public Affector(RaceGroup raceGroup, double millis) {
-//        this.raceGroup = raceGroup;
-//        this.millis = millis;
-//    }
-//
-//    public Affector(Dice dice, double millis) {
-//        this.dice = dice;
-//        this.millis = millis;
-//    }
-
     public abstract void start();
+
+    public boolean isPermanent() {
+        return permanent;
+    }
 }

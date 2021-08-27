@@ -2,6 +2,9 @@ package model.race.character;
 
 import model.dice.Dice;
 import model.dice.DiceAnalyser;
+import model.race.action.Action;
+import model.race.action.ActionMode;
+import model.race.action.GoalMode;
 import util.NextUtil;
 
 public class Rogue extends Character{
@@ -14,8 +17,8 @@ public class Rogue extends Character{
 
     public Rogue() {
         super();
-        getMaxHealth().set(4);
-        getHealth().set(4);
+        setMaxHealth(4);
+        setHealth(4);
     }
 
     @Override
@@ -31,6 +34,7 @@ public class Rogue extends Character{
             if(damage > 0) {
                 setDamage(damage);
                 setDragResponse(true);
+                action = new Action(this, ActionMode.TO_ENEMY, GoalMode.SINGLE);
                 return true;
             }
         }
@@ -40,6 +44,7 @@ public class Rogue extends Character{
                 if (keyDice != null) {
                     setDamage(keyDice.getDot());
                     setDragResponse(true);
+                    action = new Action(this, ActionMode.TO_ENEMY, GoalMode.SINGLE);
                     return true;
                 } else {
                     System.out.println("KeyDice!");
@@ -53,11 +58,11 @@ public class Rogue extends Character{
     public void reset() {
         super.reset();
         setDamage(0);
-        getActionCount().set(1);
+        getActionCountProperty().set(1);
     }
 
     @Override
-    public int getActionMode() {
+    public int getSkillMode() {
         return attackMode;
     }
 
@@ -78,9 +83,9 @@ public class Rogue extends Character{
     }
 
     @Override
-    public String getCurrentMode() {
+    public String getSkillString() {
         if(attackMode == SNEAK_ATTACK) return "Sneak attack";
         if(attackMode == CRIPPLING_STRIKE) return "Crippling strike";
-        return super.getCurrentMode();
+        return super.getSkillString();
     }
 }

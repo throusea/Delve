@@ -2,7 +2,9 @@ package model.race.character;
 
 import model.dice.Dice;
 import model.dice.DiceAnalyser;
-import model.race.ActionMode;
+import model.race.action.Action;
+import model.race.action.ActionMode;
+import model.race.action.GoalMode;
 import util.NextUtil;
 import view.component.RaceComponent;
 
@@ -18,9 +20,9 @@ public class Cleric extends Character {
 
     public Cleric() {
         super();
-        getMaxHealth().set(5);
-        getHealth().set(5);
-        basicActionMode = ActionMode.TO_PARTNER;
+        setMaxHealth(5);
+        setHealth(5);
+        actionMode = ActionMode.TO_PARTNER;
     }
 
     @Override
@@ -39,6 +41,7 @@ public class Cleric extends Character {
                     setCure(1);
                     setPressResponse(true);
                     setDragResponse(true);
+                    action = new Action(this, actionMode, GoalMode.SINGLE);
                     break;
                 }
                 case HEAL: {
@@ -47,6 +50,7 @@ public class Cleric extends Character {
                         addActionCount();
                         setCure(keyDice.getDot());
                         setPressResponse(true);
+                        action = new Action(this, actionMode, GoalMode.ALL);
                     }
                     break;
                 }
@@ -56,6 +60,7 @@ public class Cleric extends Character {
                     setReadyAction(true);
                     setCure(999);
                     setPressResponse(true);
+                    action = new Action(this, actionMode, GoalMode.ALL);
                     break;
                 }
             }
@@ -85,7 +90,7 @@ public class Cleric extends Character {
     }
 
     @Override
-    public int getActionMode() {
+    public int getSkillMode() {
         return cureMode;
     }
 
@@ -101,10 +106,10 @@ public class Cleric extends Character {
     }
 
     @Override
-    public String getCurrentMode() {
+    public String getSkillString() {
         if(cureMode == MINOR_HEAL) return "minor heal";
         if(cureMode == HEAL) return "heal";
         if(cureMode == MIRACLE) return "miracle";
-        return super.getCurrentMode();
+        return super.getSkillString();
     }
 }

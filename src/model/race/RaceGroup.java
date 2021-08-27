@@ -1,23 +1,25 @@
 package model.race;
 
-import javafx.scene.layout.Pane;
-import listener.StateChangeListener;
-import model.affector.Affector;
-import model.affector.Lighter;
-import util.RandomUtil;
+import listener.change.RaceGroupListener;
+import model.race.action.Action;
+import view.component.group.RaceGroupComponent;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static util.RandomUtil.nextInt;
 
-public class RaceGroup implements StateChangeListener {
+public class RaceGroup implements RaceGroupListener {
 
-    private List<Race> raceList;
+    public RaceGroupComponent raceGroupComponent;
+
+    public List<Race> raceList;
+
+    public List<Action> actionList;
 
     private Group group;
 
-    private int diceNum;
+    public int diceNum;
 
     private boolean isRounding;
 
@@ -54,7 +56,9 @@ public class RaceGroup implements StateChangeListener {
         return raceList.get(index);
     }
 
-    public int getDiceNum() { return diceNum; }
+    public int getDiceNum() {
+        return diceNum;
+    }
 
     public int getSize() {
         return raceList.size();
@@ -62,6 +66,10 @@ public class RaceGroup implements StateChangeListener {
 
     public Group getGroup() {
         return group;
+    }
+
+    public List<Race> getRaceList() {
+        return raceList;
     }
 
     public void setRounding(boolean value) {
@@ -72,14 +80,23 @@ public class RaceGroup implements StateChangeListener {
         raceList.forEach(race -> race.setHighlight(value));
     }
 
-    // 点击按钮后出现高亮选择攻击对象，自动计算攻击模式（包括自己和敌人），actionHandle在执行攻击者类里面进行，需要有被攻击者的信息
-    public List<Race> actionHandle() {
-        List<Race> races = new ArrayList<>();
+    public void setHealth(RaceGroup raceGroup) {
         raceList.forEach(race -> {
-            if(race.diceActionHandle()) races.add(race);
+            raceGroup.get(race.toString()).setHealth(race.getHealthProperty().get());
         });
-        if(races.isEmpty()) return null;
-        return races;
+    }
+
+    public void setRaceGroupCpt(RaceGroupComponent raceGroupComponent) {
+        this.raceGroupComponent = raceGroupComponent;
+    }
+
+    public List<Action> actionHandle() {
+        actionList = new ArrayList<>();
+        raceList.forEach(race -> {
+            if(race.diceActionHandle()) actionList.add(race.getAction());
+        });
+        if(actionList.isEmpty()) return null;
+        return actionList;
     }
 
     public void setHealth(int value) {
@@ -91,15 +108,15 @@ public class RaceGroup implements StateChangeListener {
     }
 
     @Override
+    public RaceGroup getRaceGroup() {
+        return this;
+    }
+
+    @Override
     public boolean isRounding() {
         return isRounding;
     }
 
-    public int getTotalHealth() {
-        int totalHealth = 0;
-        for (Race race : raceList) {
-            totalHealth += race.health.get();
-        }
-        return totalHealth;
+    public void resetDiceNum() {
     }
 }

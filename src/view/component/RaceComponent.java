@@ -3,8 +3,6 @@ package view.component;
 import com.sun.javafx.geom.Vec2d;
 import controller.AnimationController;
 import javafx.beans.property.*;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
@@ -13,18 +11,15 @@ import javafx.scene.paint.Color;
 import listener.RaceListener;
 import model.animation.*;
 import model.dice.Dice;
+import model.race.action.Action;
 import model.race.Mark;
 import model.race.Race;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
+import model.race.action.ActionMode;
+import view.component.group.RaceGroupComponent;
 
 import static util.BorderUtil.createBorder;
 
 public class RaceComponent extends Pane  {
-
-    private List<Mark> markList;
 
     private Label healthLabel, damageLabel;
 
@@ -72,30 +67,21 @@ public class RaceComponent extends Pane  {
         centX.bind(layoutXProperty().add(width/2));
         centY.bind(layoutYProperty().add(height/2));
 
-        markList = new ArrayList<>();
         selectDisabled = true;
         pressResponse = new SimpleBooleanProperty(false);
         dragResponse = new SimpleBooleanProperty(false);
 
         diceString = new SimpleStringProperty();
         health = new SimpleIntegerProperty();
-        health.addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                if(oldValue.intValue() > newValue.intValue()) {
-                    AnimationController.addGameTime(new Quake(RaceComponent.this, 200));
-                    //new Quake(RaceComponent.this, 200).start();
-                }
-                healthLabel.setText(String.valueOf(newValue.intValue()));
+        health.addListener((observable, oldValue, newValue) -> {
+            if(oldValue.intValue() > newValue.intValue()) {
+                AnimationController.addGameTime(new Quake(RaceComponent.this, 200));
+                //new Quake(RaceComponent.this, 200).start();
             }
+            healthLabel.setText(String.valueOf(newValue.intValue()));
         });
         damage = new SimpleIntegerProperty();
-        damage.addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                damageLabel.setText(String.valueOf(newValue.intValue()));
-            }
-        });
+        damage.addListener((observable, oldValue, newValue) -> damageLabel.setText(String.valueOf(newValue.intValue())));
         highlighted = new SimpleBooleanProperty();
         highlighted.addListener((observable, oldValue, newValue) -> {
             gc.clearRect(0,0,width,height);
@@ -106,36 +92,23 @@ public class RaceComponent extends Pane  {
             //new FadeOut(RaceComponent.this, 200, true).start();
         });
         isReadyAction = new SimpleBooleanProperty();
-        isReadyAction.addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                gc.clearRect(0,0,width,height);
-                gc.setStroke(newValue ? Color.YELLOW: Color.BLACK);
-                gc.fillText(listener.toString(), 0, 30);
-                gc.strokeRect(0,0,width, height);
-                AnimationController.addGameTime(new FadeOut(RaceComponent.this, 300, true));
-                //new FadeOut(RaceComponent.this, 300, true).start();
-            }
+        isReadyAction.addListener((observable, oldValue, newValue) -> {
+            gc.clearRect(0,0,width,height);
+            gc.setStroke(newValue ? Color.YELLOW: Color.BLACK);
+            gc.fillText(listener.toString(), 0, 30);
+            gc.strokeRect(0,0,width, height);
+            AnimationController.addGameTime(new FadeOut(RaceComponent.this, 300, true));
+            //new FadeOut(RaceComponent.this, 300, true).start();
         });
         isDead = new SimpleBooleanProperty();
-        isDead.addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                gc.clearRect(0,0,width,height);
-                gc.setStroke(newValue ? Color.GRAY: Color.BLACK);
-                gc.fillText(listener.toString(), 0, 30);
-                gc.strokeRect(0,0,width, height);
-                selectDisabled = false;
-                setDisable(newValue);
-            }
+        isDead.addListener((observable, oldValue, newValue) -> {
+            gc.clearRect(0,0,width,height);
+            gc.setStroke(newValue ? Color.GRAY: Color.BLACK);
+            gc.fillText(listener.toString(), 0, 30);
+            gc.strokeRect(0,0,width, height);
+            selectDisabled = false;
+            setDisable(newValue);
         });
-        addMouseListener();
-    }
-
-    public void addMouseListener() {
-        setOnDragDetected(e -> System.out.println("Detected"));
-        setOnMouseReleased(e -> System.out.println("Released"));
-        setOnDragExited(e -> System.out.println("Exit"));
     }
 
     public void addDice(DiceComponent dice) {
@@ -148,21 +121,8 @@ public class RaceComponent extends Pane  {
         AnimationController.addGameTime(new Mover(dice, 500, new Vec2d(this.centX.get() - dice.getSize()/2, this.centY.get() - dice.getSize()/2)));
     }
 
-    public void addMark(Mark mark) {
-        if(mark != null)
-        markList.add(mark);
-    }
-
     public Mark getKeyMark() {
         return listener.getKeyMark();
-    }
-
-    public boolean hasMarked(RaceComponent raceCpt) {
-        return raceCpt.markList.contains(listener.getKeyMark());
-    }
-
-    public void clearMark() {
-        markList.clear();
     }
 
     public boolean getPressResponse() { return pressResponse.get(); }
@@ -191,10 +151,6 @@ public class RaceComponent extends Pane  {
 
     public int getDamage() {
         return damage.get();
-    }
-
-    public int getActionMode() {
-        return listener.getBasicActionMode();
     }
 
     public void setHealth(int health) {
@@ -232,15 +188,32 @@ public class RaceComponent extends Pane  {
 
     public boolean isSelectDisabled() { return selectDisabled; }
 
-    public boolean reduceActionCount() {
-        return listener.reduceActionCount();
+    public void action(RaceComponent raceCpt) {
+        Action action = getRace().action;
+        if(action != null) action.run(raceCpt.getRace());
+    }
+
+    public void action(RaceGroupComponent raceGroupCpt) {
+        Action action = getRace().action;
+        if(action != null) {
+            action.run(raceGroupCpt.getRaceGroup());
+            new Explosion((Pane)getParent(), getCentX(), getCentY(), 1000).start();
+        }
+    }
+
+    public Race getRace() {
+        return listener.getRace();
+    }
+
+    public ActionMode getActionMode() {
+        return listener.getActionMode();
     }
 
     public void registerListener(Race race) {
         this.listener = race;
         diceString.bindBidirectional(race.getDiceString());
-        health.bindBidirectional(race.getHealth());
-        damage.bind(race.getDamage());
+        health.bindBidirectional(race.getHealthProperty());
+        damage.bind(race.getDamageProperty());
         isDead.bind(race.getDead());
         canvas.getGraphicsContext2D().fillText(race.toString(), 0, 40);
     }

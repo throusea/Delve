@@ -3,14 +3,13 @@ package view.component.group;
 import com.sun.javafx.geom.Vec2d;
 import controller.AnimationController;
 import javafx.scene.layout.Pane;
-import listener.StateChangeListener;
+import listener.change.RaceGroupListener;
 import model.animation.FadeIn;
 import model.race.Group;
-import util.NextUtil;
+import model.race.RaceGroup;
 import view.component.Bound;
 import view.component.RaceComponent;
 import view.component.RaceStaticComponent;
-import view.component.group.GroupComponent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +22,7 @@ public class RaceGroupComponent extends GroupComponent {
 
     private Group group;
 
-    private StateChangeListener listener;
+    private RaceGroupListener groupListener;
 
     public RaceGroupComponent(Bound bound, Group group) {
         super(bound);
@@ -77,15 +76,13 @@ public class RaceGroupComponent extends GroupComponent {
         bound.addSelectedRange(vector.x, vector.y, 80, 60);
     }
 
-    public void register(StateChangeListener listener) {
-        this.listener = listener;
-    }
-
-    public boolean isListener(StateChangeListener listener) {
-        return this.listener.equals(listener);
-    }
+    public void registerListener(RaceGroupListener listener) { this.groupListener = listener; }
 
     public boolean isRounding() {
-        return listener.isRounding();
+        return groupListener.isRounding();
+    }
+
+    public RaceGroup getRaceGroup() {
+        return groupListener.getRaceGroup();
     }
 }

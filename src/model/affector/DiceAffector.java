@@ -1,8 +1,11 @@
 package model.affector;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import model.dice.DiceGroup;
 
 public class DiceAffector extends Affector{
+
     private DiceGroup diceGroup;
 
     private int diceNum;
@@ -12,17 +15,11 @@ public class DiceAffector extends Affector{
         this.diceNum = diceNum;
     }
 
-    @Override
     public void start() {
-        run();
-    }
-
-    @Override
-    protected Void call() throws Exception {
         int t = diceGroup.getDiceNum() - diceNum;
-        while(diceNum-- > 0) {
-            diceGroup.getList().remove(0);
+        while(t-- > 0) {
+            diceGroup.removeDice();
         }
-        return null;
+        System.out.println("start!");
     }
 }

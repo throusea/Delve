@@ -35,7 +35,6 @@ public class DiceComponent extends Label {
             if(dot.get() != -1)
             shiftChecked();
         });
-        //setOnMouseReleased(evt -> shiftChecked());
         setBorder(createBorder(Color.BLACK));
 
         dot.addListener(new DotChangeListener(this));

@@ -26,6 +26,10 @@ public abstract class Animation extends Task<Void> {
         return timeline;
     }
 
+    public void addAnimation(Animation animation) {
+        timeline.getKeyFrames().addAll(animation.getTimeline().getKeyFrames());
+    }
+
     public ObservableList<KeyFrame> getKeyFrames() { return timeline.getKeyFrames(); }
 
     public abstract void start();

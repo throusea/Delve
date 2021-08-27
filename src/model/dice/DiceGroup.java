@@ -42,6 +42,12 @@ public class DiceGroup {
         diceList.add(new Dice(dot));
     }
 
+    public void removeDice() {
+        Dice dice = diceList.remove(0);
+        diceList.forEach(dice1 -> System.out.println(dice1));
+        dice.diceCpt.setDisable(true);
+    }
+
     public void reset() {
         diceCount = 3;
         clearDice();

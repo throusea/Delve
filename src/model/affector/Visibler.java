@@ -13,17 +13,7 @@ public class Visibler extends Affector{
         this.value = value;
     }
 
-    @Override
-    public void start() {
-        run();
-    }
-
-    @Override
-    protected Void call() throws Exception {
-        System.out.println("VISIS");
-        diceGroup.getList().forEach(dice -> {
-            dice.setVisible(value);
-        });
-        return null;
+    public void start(){
+        diceGroup.getList().forEach(dice -> dice.setVisible(value));
     }
 }

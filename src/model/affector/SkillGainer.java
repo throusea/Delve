@@ -1,7 +1,6 @@
 package model.affector;
 
 import model.dice.Dice;
-import model.race.ActionMode;
 import model.race.Race;
 import model.race.character.Cleric;
 import model.race.character.Rogue;
@@ -24,13 +23,7 @@ public class SkillGainer extends Affector{
         this.damage = damage;
     }
 
-    @Override
-    public void start() {
-        run();
-    }
-
-    @Override
-    protected Void call() throws Exception {
+    public void start(){
         System.out.printf("%d %d", actionMode, damage);
         switch (actionMode) {
             case Rogue.CRIPPLING_STRIKE: {
@@ -68,6 +61,5 @@ public class SkillGainer extends Affector{
                 break;
             }
         }
-        return null;
     }
 }

@@ -51,8 +51,7 @@ public class GameModifierComponent extends Pane {
             String s = textField.getText();
             if(s != null && isNumeric(s)) {
                 Race race = raceGroup.get(chrLabel.getText());
-                System.out.println(race);
-                new SkillGainer(race, race.getActionMode(), Integer.parseInt(s)).start();
+                new SkillGainer(race, race.getSkillMode(), Integer.parseInt(s)).start();
                 stageListener.actionHandle();
             }
             textField.deleteText(0, textField.getLength());

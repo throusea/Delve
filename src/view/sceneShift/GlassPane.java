@@ -3,27 +3,22 @@ package view.sceneShift;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.geometry.Insets;
-import javafx.scene.control.Label;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 import model.animation.FadeIn;
+import model.animation.FadeOut;
+import view.component.group.ButtonGroup;
 
-import javax.xml.soap.Text;
-
-import static com.sun.org.apache.xalan.internal.xsltc.compiler.util.Type.Root;
+import static controller.GameController.cardLayout;
 
 
 public class GlassPane extends Pane {
 
+    ButtonGroup buttonGroup;
+
+    Rectangle rectangle;
     public GlassPane() {
         setLayoutX(0);
         setLayoutY(0);
@@ -31,27 +26,27 @@ public class GlassPane extends Pane {
         setDisable(true);
         setManaged(false);
         setPrefSize(1280,800);
-        Rectangle rectangle = new Rectangle(1280,800);
+        rectangle = new Rectangle(1280,800);
         rectangle.setFill(Color.BLACK);
         getChildren().add(rectangle);
+
+        String[] s = {"Resume", "Music On", "Back To Menu"};
+        buttonGroup = new ButtonGroup(this, s);
+        buttonGroup.setTextFill(Color.WHITE);
+        buttonGroup.getLabel("Resume").setOnMouseClicked(event -> show());
+        buttonGroup.getLabel("Back To Menu").setOnMouseClicked(event -> {
+            show();
+            cardLayout.show("Menu");
+        });
     }
 
-    public void appearMenu(double newValue) {
-        //new FadeIn(this,500,false).start();
-        KeyValue keyValue = new KeyValue(opacityProperty(), newValue);
-        KeyFrame keyFrame = new KeyFrame(Duration.millis(300), keyValue);
-        Timeline timeline = new Timeline();
-        timeline.getKeyFrames().add(keyFrame);
-        timeline.playFromStart();
-    }
-
-    public void shiftState() {
+    public void show() {
         if(isDisable()) {
             setDisable(false);
-            appearMenu(0.3);
+            new FadeIn(this, 300, false).startTo(0.3);
         }else {
             setDisable(true);
-            appearMenu(0);
+            new FadeOut(this, 300, false).startFrom(0.3);
         }
     }
 }

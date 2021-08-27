@@ -18,5 +18,7 @@ public interface StageListener extends Listener {
 
     void reset();
 
+    void addAffector();
+
     DiceGroup getDiceGroup();
 }

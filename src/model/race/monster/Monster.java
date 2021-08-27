@@ -1,19 +1,17 @@
 package model.race.monster;
 
-import model.race.ActionMode;
 import model.race.Race;
+import model.race.action.ActionMode;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Monster extends Race {
 
-    public static List<Monster> monsterList = new ArrayList<>();
+    public List<Integer> keyDots;
 
     public Monster() {
-    }
-
-    public static void initMonsterLibrary() {
+        keyDots = new ArrayList<>();
     }
 
     public static Monster get(String name) {
@@ -31,8 +29,22 @@ public class Monster extends Race {
     }
 
     public Monster(Monster monster) {
-        getHealth().set(monster.getHealth().get());
-        getMaxHealth().set(monster.getMaxHealth().get());
-        basicActionMode = ActionMode.TO_ENEMY;
+        getHealthProperty().set(monster.getHealthProperty().get());
+        getMaxHealthProperty().set(monster.getMaxHealthProperty().get());
+        actionMode = ActionMode.TO_ENEMY;
+    }
+
+    @Override
+    public boolean diceActionHandle() {
+        if(!super.diceActionHandle()) return false;
+        String s = getDiceString().get();
+        for(int i = 0; i < s.length(); i++) {
+            if(keyDots.contains(String.valueOf(s.charAt(i)))) addActionCount();
+        }
+        if(getActionCountProperty().get() > 0) {
+            setDragResponse(true);
+            return true;
+        }
+        return false;
     }
 }

@@ -1,5 +1,6 @@
 package model.auto;
 
+import controller.GameController;
 import listener.StageListener;
 import listener.PanelListener;
 import model.dice.Dice;
@@ -7,16 +8,25 @@ import model.dice.DiceGroup;
 import model.race.Race;
 import model.race.RaceGroup;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class AutoRaceGroup {
 
     StageListener stageListener;
 
     PanelListener panelListener;
 
-    private RaceGroup raceGroup;
+    protected RaceGroup raceGroup;
 
-    public AutoRaceGroup(RaceGroup raceGroup) {
+    protected DiceGroup diceGroup;
+
+    public AutoRaceGroup(GameController controller, RaceGroup raceGroup) {
+        this.stageListener = controller;
+
+        //加一个启动器， autoLantcher, 当它为true时使用；
         this.raceGroup = raceGroup;
+        diceGroup = controller.getDiceGroup();
     }
 
     public void autoStage() {
@@ -27,10 +37,12 @@ public class AutoRaceGroup {
 
     public void autoRoll() {
         stageListener.roll();
-        stageListener.getDiceGroup();
-        if(false) {
-            stageListener.nextStep();
-        }
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                stageListener.nextStep();
+            }
+        }, 3000);
     }
 
     public void autoSelect() {

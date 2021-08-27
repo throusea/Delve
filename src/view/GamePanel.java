@@ -12,6 +12,7 @@ import listener.PanelListener;
 import model.animation.Mover;
 import model.dice.Dice;
 import model.race.*;
+import model.race.action.ActionMode;
 import view.component.*;
 import view.component.group.DiceGroupComponent;
 import view.component.group.RaceGroupComponent;
@@ -27,7 +28,7 @@ public class GamePanel implements PanelListener {
 
     Pane mainPane;
 
-    DiceGroupComponent dices;
+    List<DiceGroupComponent> diceGroupCpts;
 
     List<RaceGroupComponent> raceGroupCpts;
 
@@ -41,6 +42,7 @@ public class GamePanel implements PanelListener {
         this.mainPane = mainPane;
         nodeList = mainPane.getChildren();
         raceGroupCpts = new ArrayList<>();
+        diceGroupCpts = new ArrayList<>();
 
         mainPane.setOnMouseDragged(event -> {
 
@@ -96,23 +98,21 @@ public class GamePanel implements PanelListener {
     }
 
     public void addDiceGroupCpt(DiceGroupComponent dices) {
-        this.dices = dices;
+        diceGroupCpts.add(dices);
     }
 
     public void add(RaceGroupComponent raceGroupCpt) {
         raceGroupCpts.add(raceGroupCpt);
     }
 
+    public void clear() {
+        diceGroupCpts.clear();
+        raceGroupCpts.clear();
+    }
+
     public RaceGroupComponent getCurrentRoundRaceGroup() {
         for (RaceGroupComponent raceGroupCpt : raceGroupCpts) {
             if(raceGroupCpt.isRounding()) return raceGroupCpt;
-        }
-        return null;
-    }
-
-    public RaceGroupComponent getRaceGroupCpt(RaceGroup raceGroup) {
-        for (RaceGroupComponent raceGroupCpt : raceGroupCpts) {
-            if(raceGroupCpt.isListener(raceGroup)) return raceGroupCpt;
         }
         return null;
     }
@@ -144,19 +144,15 @@ public class GamePanel implements PanelListener {
             RaceComponent object = detectRace(false, subject);
 
             if(subject.getPressResponse() && Vec2d.distance(initX,initY,node.getLayoutX(),node.getLayoutY()) <= 3) {
-                System.out.println("OK");
-                if(subject.getDragResponse()) {
-                    new ActionMode(subject, subject, subject.getActionMode()).run();
-                }else {
-                    raceGroupCpts.forEach(raceGroupCpt -> {
+                if(subject.getDragResponse()) subject.action(subject);
+                else raceGroupCpts.forEach(raceGroupCpt -> {
                         if (raceGroupCpt != getCurrentRoundRaceGroup() && subject.getActionMode() == ActionMode.TO_ENEMY)
-                            new ActionMode(subject, raceGroupCpt.getRaceComponentList(), subject.getActionMode()).run();
+                            subject.action(raceGroupCpt);
                         if (raceGroupCpt == getCurrentRoundRaceGroup() && subject.getActionMode() == ActionMode.TO_PARTNER)
-                            new ActionMode(subject, raceGroupCpt.getRaceComponentList(), subject.getActionMode()).run();
-                    });
-                }
-            }else if(object != null && subject.getDragResponse() && isDragged && object.isHighlighted()) {
-                new ActionMode(subject, object, subject.getActionMode()).run();
+                            subject.action(raceGroupCpt);
+                });
+            }else if(object != null && subject.getDragResponse() && isDragged) {
+                subject.action(object);
                 return true;
             }
         }
@@ -169,7 +165,7 @@ public class GamePanel implements PanelListener {
 
     public boolean legalPosition() {
         if(node instanceof DiceComponent)
-            return dices.getBound().contains(x, y, x + dices.getSize(), y + dices.getSize());
+            return diceGroupCpts.get(0).getBound().contains(x, y, x + diceGroupCpts.get(0).getSize(), y + diceGroupCpts.get(0).getSize());
         if(node instanceof RaceComponent)
             return getCurrentRoundRaceGroup().getBound().contains(x, y, x + 80, y + 60);
         return false;

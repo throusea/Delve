@@ -2,6 +2,8 @@ package model.race.character;
 
 import model.dice.Dice;
 import model.dice.DiceAnalyser;
+import model.race.action.Action;
+import model.race.action.GoalMode;
 import util.NextUtil;
 
 public class Wizard extends Character{
@@ -17,8 +19,8 @@ public class Wizard extends Character{
     private Dice keyDice;
 
     public Wizard() {
-        getMaxHealth().set(4);
-        getHealth().set(4);
+        setMaxHealth(4);
+        setHealth(4);
     }
 
     @Override
@@ -32,6 +34,7 @@ public class Wizard extends Character{
                         addActionCount();
                         setDamage(3);
                         setDragResponse(true);
+                        action = new Action(this, actionMode, GoalMode.SINGLE);
                     }
                     if(fireballMode == FIREBALL_ALL) {
                         addActionCount();
@@ -48,6 +51,7 @@ public class Wizard extends Character{
                         addActionCount();
                         setDamage(keyDice.getDot());
                         setPressResponse(true);
+                        action = new Action(this, actionMode, GoalMode.ALL);
                     }
                     break;
                 }
@@ -56,6 +60,7 @@ public class Wizard extends Character{
                     addActionCount();
                     setDamage(999);
                     setPressResponse(true);
+                    action = new Action(this, actionMode, GoalMode.ALL);
                     break;
                 }
                 default:
@@ -66,7 +71,7 @@ public class Wizard extends Character{
     }
 
     @Override
-    public int getActionMode() {
+    public int getSkillMode() {
         return attackMode;
     }
 
@@ -87,10 +92,10 @@ public class Wizard extends Character{
     }
 
     @Override
-    public String getCurrentMode() {
+    public String getSkillString() {
         if(attackMode == FIREBALL) return "Fireball";
         if(attackMode == CHAIN_LIGHTNING) return "Chain lightning";
         if(attackMode == DEMISE) return "Demise";
-        return super.getCurrentMode();
+        return super.getSkillString();
     }
 }

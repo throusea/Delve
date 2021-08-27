@@ -50,21 +50,21 @@ public class GameRound {
         stageList.forEach(gameStage -> gameStage.registerListener(listener));
     }
 
+    //# 每次阶段转换（包括Round）都会经过该函数
     public void run() {
+        //持续更新骰子数量
+        raceGroup.resetDiceNum();
         stageList.get(currentStage).run();
     }
 
+    //# 跳过一个回合
     public void skip() {
         currentStage = NextUtil.next(currentStage, 0, stageList.size() - 1);
     }
 
+    //# nextStage实际上就是上述两方法的结合
     public void nextStage() {
-        currentStage = NextUtil.next(currentStage, 0, stageList.size() - 1);
-        if(currentStage == ROLL) {
-            addAffector(new Visibler(diceGroup, false), END);
-            //addAffector(new DiceAffector(diceGroup, raceGroup.getTotalHealth()), START);
-        }
-        System.out.println(currentStage);
+        skip();
         run();
     }
 

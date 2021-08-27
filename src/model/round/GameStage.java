@@ -14,8 +14,15 @@ public class GameStage {
     protected List<Affector> stageAffectors = new ArrayList<>();
 
     public void run() {
-        stageAffectors.forEach(affector -> affector.start());
-        new ArrayList<>(stageAffectors).forEach(affector -> stageAffectors.remove(affector));
+        stageAffectors.forEach(affector -> {
+            System.out.println("Run" + affector);
+            affector.start();
+        });
+        new ArrayList<>(stageAffectors).forEach(affector -> {
+            if(!affector.isPermanent()) {
+                stageAffectors.remove(affector);
+            }
+        });
     }
 
     public List<Affector> getStageAffectors() { return stageAffectors; }
