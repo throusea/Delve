@@ -9,6 +9,7 @@ public class EndStage extends GameStage{
         System.out.println("It is end stage.");
         listener.reset();
         listener.attackState(false);
+        listener.autoState();
         listener.nextStep();
     }
 

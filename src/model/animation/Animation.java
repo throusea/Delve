@@ -5,9 +5,6 @@ import javafx.animation.Timeline;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.scene.Node;
-import model.dice.Dice;
-import model.race.Race;
-import view.component.DiceComponent;
 
 public abstract class Animation extends Task<Void> {
 

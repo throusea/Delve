@@ -2,7 +2,6 @@ package view.sceneShift;
 
 import com.sun.javafx.geom.Vec2d;
 import javafx.animation.SequentialTransition;
-import javafx.animation.Timeline;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -10,14 +9,10 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
-import model.animation.Animation;
 import model.animation.FadeIn;
 import model.animation.FadeOut;
 import model.animation.Mover;
 import model.round.GameStage;
-import org.w3c.dom.css.Rect;
-
-import javax.xml.datatype.Duration;
 
 public class StageTabPane extends Pane {
 

@@ -2,9 +2,6 @@ package model.animation;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -31,12 +28,7 @@ public class Explosion extends Animation{
         keyValue = new KeyValue(circle.scaleYProperty(), 2000);
         timeline.getKeyFrames().add(new KeyFrame(Duration.millis(millis), keyValue));
         timeline.getKeyFrames().addAll(new FadeOut(circle, millis, false).getTimeline().getKeyFrames());
-        timeline.setOnFinished(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                pane.getChildren().remove(circle);
-            }
-        });
+        timeline.setOnFinished(event -> pane.getChildren().remove(circle));
     }
     @Override
     public void start() {
@@ -44,7 +36,7 @@ public class Explosion extends Animation{
     }
 
     @Override
-    protected Void call() throws Exception {
+    protected Void call() {
         timeline.playFromStart();
 
         return null;

@@ -3,19 +3,12 @@ package view.component;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
-import javafx.beans.property.Property;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.util.Duration;
 import listener.StageListener;
-
-import java.security.Key;
 
 public class GameClock extends Label implements Runnable{
 
@@ -27,13 +20,10 @@ public class GameClock extends Label implements Runnable{
         count = new Timeline();
         setFont(Font.font(null, FontWeight.BOLD, 28));
 
-        textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                if(newValue.equals("0")) {
-                    stageListener.nextStep();
-                    System.out.println("nextStep");
-                }
+        textProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue.equals("0")) {
+                stageListener.nextStep();
+                System.out.println("nextStep");
             }
         });
 

@@ -125,7 +125,6 @@ public class GamePanel implements PanelListener {
         if(node instanceof DiceComponent) return NORMAL;
         if(node instanceof RaceComponent) return ((RaceComponent) node).isSelectDisabled() ? WAIT : NORMAL;
         while(node instanceof Text || node instanceof Canvas || node instanceof Label) node = node.getParent();
-        if(node instanceof DiceComponent) return NORMAL;
         if(node instanceof RaceComponent) return ((RaceComponent) node).isSelectDisabled() ? WAIT : NORMAL;
         return FORBID;
     }

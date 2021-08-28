@@ -1,6 +1,5 @@
 package model.round;
 
-import listener.Listener;
 import listener.StageListener;
 import model.affector.Affector;
 
@@ -14,10 +13,7 @@ public class GameStage {
     protected List<Affector> stageAffectors = new ArrayList<>();
 
     public void run() {
-        stageAffectors.forEach(affector -> {
-            System.out.println("Run" + affector);
-            affector.start();
-        });
+        stageAffectors.forEach(Affector::start);
         new ArrayList<>(stageAffectors).forEach(affector -> {
             if(!affector.isPermanent()) {
                 stageAffectors.remove(affector);

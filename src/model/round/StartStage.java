@@ -8,6 +8,7 @@ public class StartStage extends GameStage {
         super.run();
         listener.rollState(false);
         listener.selectState(false);
+        listener.autoState();
         System.out.println("It is start stage.");
         listener.nextStep();
     }

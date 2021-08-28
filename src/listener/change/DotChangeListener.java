@@ -4,10 +4,9 @@ import controller.AnimationController;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import model.animation.DiceAppear;
-import model.animation.DiceDisappear;
 import view.component.DiceComponent;
 
-public class DotChangeListener implements ChangeListener {
+public class DotChangeListener implements ChangeListener<Number> {
 
     private DiceComponent diceComponent;
 
@@ -16,8 +15,8 @@ public class DotChangeListener implements ChangeListener {
     }
 
     @Override
-    public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-        int dot = (Integer) newValue;
+    public void changed(ObservableValue observable, Number oldValue, Number newValue) {
+        int dot = newValue.intValue();
         diceComponent.setText(String.valueOf(dot));
         if(dot == -1) {
             AnimationController.addGameTime(new DiceAppear(diceComponent, 1000));

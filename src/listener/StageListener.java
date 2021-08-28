@@ -16,6 +16,8 @@ public interface StageListener extends Listener {
 
     void nextStep();
 
+    void autoState();
+
     void reset();
 
     void addAffector();

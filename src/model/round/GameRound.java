@@ -1,15 +1,10 @@
 package model.round;
 
 import listener.StageListener;
-import model.GameStation;
 import model.affector.Affector;
-import model.affector.DiceAffector;
-import model.affector.Visibler;
-import model.dice.Dice;
 import model.dice.DiceGroup;
-import model.race.Group;
-import model.race.Race;
 import model.race.RaceGroup;
+import model.race.monster.MonsterGroup;
 import util.NextUtil;
 
 import java.util.ArrayList;
@@ -27,6 +22,8 @@ public class GameRound {
 
     private int currentStage;
 
+    private boolean isAuto;
+
     public GameRound(RaceGroup raceGroup, DiceGroup diceGroup) {
         stageList.add(new StartStage());
         stageList.add(new RollStage());
@@ -34,9 +31,13 @@ public class GameRound {
         stageList.add(new EndStage());
         this.raceGroup = raceGroup;
         this.diceGroup = diceGroup;
+        if(raceGroup instanceof MonsterGroup) isAuto = true;
+        else isAuto = false;
     }
 
     public DiceGroup getDiceGroup() { return diceGroup; }
+
+    public boolean isAuto() { return isAuto; }
 
     public void addAffector(Affector affector, int stageIndex) {
         stageList.get(stageIndex).getStageAffectors().add(affector);

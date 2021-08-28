@@ -1,12 +1,8 @@
 package view.sceneShift;
 
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.util.Duration;
 import model.animation.FadeIn;
 import model.animation.FadeOut;
 import view.component.group.ButtonGroup;

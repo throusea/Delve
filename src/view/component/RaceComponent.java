@@ -118,7 +118,7 @@ public class RaceComponent extends Pane  {
             else diceString.set(diceString.get().concat(String.valueOf(dice.getDot())));
         }
         AnimationController.addGameTime(new DiceDisappear(dice, 500, false));
-        AnimationController.addGameTime(new Mover(dice, 500, new Vec2d(this.centX.get() - dice.getSize()/2, this.centY.get() - dice.getSize()/2)));
+        AnimationController.addGameTime(new Mover(dice, 500, new Vec2d(this.centX.get() - (double) dice.getSize()/2, this.centY.get() - (double) dice.getSize()/2)));
     }
 
     public Mark getKeyMark() {
@@ -182,7 +182,7 @@ public class RaceComponent extends Pane  {
         listener.setIsDead(value);
     }
 
-    public void setSelectDisabled(boolean value) { selectDisabled = isDead.get() ? true : value; }
+    public void setSelectDisabled(boolean value) { selectDisabled = isDead.get() || value; }
 
     public void setHighlighted(boolean value) { highlighted.set(value); }
 

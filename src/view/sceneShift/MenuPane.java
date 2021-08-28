@@ -1,16 +1,8 @@
 package view.sceneShift;
 
 import javafx.scene.control.Label;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
-import model.animation.Balloon;
 import view.component.group.ButtonGroup;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static controller.GameController.cardLayout;
 

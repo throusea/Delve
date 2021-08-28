@@ -29,6 +29,7 @@ public class Monster extends Race {
     }
 
     public Monster(Monster monster) {
+        keyDots = new ArrayList<>();
         getHealthProperty().set(monster.getHealthProperty().get());
         getMaxHealthProperty().set(monster.getMaxHealthProperty().get());
         actionMode = ActionMode.TO_ENEMY;
@@ -39,7 +40,7 @@ public class Monster extends Race {
         if(!super.diceActionHandle()) return false;
         String s = getDiceString().get();
         for(int i = 0; i < s.length(); i++) {
-            if(keyDots.contains(String.valueOf(s.charAt(i)))) addActionCount();
+            if(keyDots.contains(s.charAt(i) - '0')) addActionCount();
         }
         if(getActionCountProperty().get() > 0) {
             setDragResponse(true);

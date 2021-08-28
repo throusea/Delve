@@ -45,6 +45,8 @@ public class GameStation {
 
     public DiceGroup getDiceGroup(int index) { return roundList.get(index).getDiceGroup(); }
 
+    public DiceGroup getDiceGroup() { return roundList.get(currentRound).getDiceGroup(); }
+
     public RaceGroup getRaceGroup(int index) {
         return raceGroupList.get(index);
     }
@@ -104,7 +106,7 @@ public class GameStation {
 
     public void playFromStart() {
         currentRound = 0;
-        raceGroupList.forEach(raceGroup -> raceGroup.reset());
+        raceGroupList.forEach(RaceGroup::reset);
         play();
     }
 

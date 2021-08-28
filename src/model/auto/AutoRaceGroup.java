@@ -1,17 +1,18 @@
 package model.auto;
 
 import controller.GameController;
+import javafx.animation.PauseTransition;
+import javafx.util.Duration;
+import listener.AutoListener;
 import listener.StageListener;
 import listener.PanelListener;
 import model.dice.Dice;
 import model.dice.DiceGroup;
 import model.race.Race;
 import model.race.RaceGroup;
+import model.round.GameStage;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
-public class AutoRaceGroup {
+public class AutoRaceGroup implements AutoListener {
 
     StageListener stageListener;
 
@@ -24,25 +25,18 @@ public class AutoRaceGroup {
     public AutoRaceGroup(GameController controller, RaceGroup raceGroup) {
         this.stageListener = controller;
 
-        //加一个启动器， autoLantcher, 当它为true时使用；
+        //加一个启动器， autoLauncher, 当它为true时使用；
         this.raceGroup = raceGroup;
         diceGroup = controller.getDiceGroup();
     }
 
-    public void autoStage() {
-        autoRoll();
-        autoSelect();
-        autoAction();
-    }
-
     public void autoRoll() {
-        stageListener.roll();
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                stageListener.nextStep();
-            }
-        }, 3000);
+        PauseTransition pauseTransition = new PauseTransition(Duration.millis(3000));
+        pauseTransition.setOnFinished(event -> stageListener.roll());
+        pauseTransition.playFromStart();
+        PauseTransition pauseTransition1 = new PauseTransition(Duration.millis(5000));
+        pauseTransition1.setOnFinished(event -> stageListener.nextStep());
+        pauseTransition1.playFromStart();
     }
 
     public void autoSelect() {
@@ -54,7 +48,7 @@ public class AutoRaceGroup {
         }
     }
 
-    public void autoAction() {
+    public void autoAction(GameStage stage) {
         stageListener.actionHandle();
     }
 

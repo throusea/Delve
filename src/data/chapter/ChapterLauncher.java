@@ -1,7 +1,6 @@
 package data.chapter;
 
 import model.GameStation;
-import model.dice.DiceGroup;
 import model.race.Group;
 import model.race.character.CharacterGroup;
 import model.race.monster.Monster;

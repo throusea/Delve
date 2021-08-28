@@ -5,11 +5,11 @@ import java.util.Random;
 public class RandomUtil {
     static Random random = new Random();
 
-    public static int nextInt(int x, int y) {
-        return (int)nextDouble(x,y);
+    public static int nextInt(int a, int b) {
+        return (int)nextDouble(a,b);
     }
 
-    public static double nextDouble(double x, double y) {
-        return random.nextDouble() * (y - x + 1) + x;
+    public static double nextDouble(double a, double b) {
+        return random.nextDouble() * (b - a + 1) + a;
     }
 }

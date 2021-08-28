@@ -13,7 +13,7 @@ public class MonsterGroup extends RaceGroup {
 
     public MonsterGroup(Group group) {
         super(group);
-        actionList = new ArrayList();
+        actionList = new ArrayList<>();
     }
 
     public void setDiceString(String value) {
@@ -23,10 +23,10 @@ public class MonsterGroup extends RaceGroup {
     public void allocateDices() {
         int index = 0;
         for (Race race : raceList) {
-            race.getDiceString().set(diceString.substring(index, index + race.getHealthProperty().get()));
-            index += race.getHealthProperty().get();
+            race.getDiceString().set(diceString.substring(index, index + race.getHealth()));
+            index += race.getHealth();
             race.diceActionHandle();
-            int t = race.getActionCountProperty().get();
+            int t = race.getActionCountProperty().intValue();
             while(t-- > 0) {
                 actionList.add(new Action(race, race.getActionMode(), GoalMode.SINGLE));
             }

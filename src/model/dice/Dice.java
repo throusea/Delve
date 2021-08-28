@@ -6,7 +6,6 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import listener.DiceListener;
-import model.animation.Animation;
 import model.animation.DiceDisappear;
 import util.RandomUtil;
 import view.component.DiceComponent;

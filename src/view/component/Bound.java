@@ -1,7 +1,6 @@
 package view.component;
 
 import com.sun.javafx.geom.Vec2d;
-import javafx.stage.Screen;
 
 import java.util.ArrayList;
 import java.util.List;

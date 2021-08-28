@@ -1,12 +1,8 @@
 package view.component;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import model.race.Race;
@@ -51,10 +47,14 @@ public class RaceStaticComponent extends Pane {
         race.getHealthProperty().addListener((observable, oldValue, newValue) -> healthBar.setProgress(newValue.doubleValue() / race.getMaxHealthProperty().get()));
         race.getDiceString().addListener((observable, oldValue, newValue) -> {
             if(newValue != null) {
-                Label label = new Label(String.valueOf(newValue.charAt(newValue.length()-1)));
-                label.setPrefSize(25,25);
-                label.setBorder(null);
-                box.getChildren().add(label);
+                box.getChildren().clear();
+                int t = newValue.length() - 1;
+                do {
+                    Label label = new Label(String.valueOf(newValue.charAt(t)));
+                    label.setPrefSize(25, 25);
+                    label.setBorder(null);
+                    box.getChildren().add(label);
+                }while(--t >= 0);
             }else {
                 box.getChildren().clear();
             }

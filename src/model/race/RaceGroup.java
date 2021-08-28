@@ -81,9 +81,7 @@ public class RaceGroup implements RaceGroupListener {
     }
 
     public void setHealth(RaceGroup raceGroup) {
-        raceList.forEach(race -> {
-            raceGroup.get(race.toString()).setHealth(race.getHealthProperty().get());
-        });
+        raceList.forEach(race -> raceGroup.get(race.toString()).setHealth(race.getHealthProperty().get()));
     }
 
     public void setRaceGroupCpt(RaceGroupComponent raceGroupComponent) {
@@ -104,7 +102,7 @@ public class RaceGroup implements RaceGroupListener {
     }
 
     public void reset() {
-        raceList.forEach(race -> race.reset());
+        raceList.forEach(Race::reset);
     }
 
     @Override

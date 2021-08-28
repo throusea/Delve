@@ -10,6 +10,7 @@ public class AttackStage extends GameStage{
         StageTabPane.shift(this);
         listener.selectState(true);
         listener.attackState(true);
+        listener.autoState();
     }
 
     @Override

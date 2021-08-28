@@ -8,7 +8,7 @@ import javafx.scene.paint.Color;
 
 import static util.BorderUtil.createBorder;
 
-public class ColorChangeListener implements ChangeListener {
+public class ColorChangeListener implements ChangeListener<Boolean> {
 
     Node node;
 
@@ -21,7 +21,7 @@ public class ColorChangeListener implements ChangeListener {
     }
 
     @Override
-    public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-        ((Label)node).setBorder(createBorder(!(Boolean) newValue ? oldColor : newColor));
+    public void changed(ObservableValue observable, Boolean oldValue, Boolean newValue) {
+        ((Label)node).setBorder(createBorder(!newValue ? oldColor : newColor));
     }
 }

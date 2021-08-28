@@ -63,10 +63,7 @@ public class GameModifierComponent extends Pane {
     public boolean isNumeric(String str){
         Pattern pattern = Pattern.compile("[0-9]*");
         Matcher isNum = pattern.matcher(str);
-        if( !isNum.matches() ) {
-            return false;
-        }
-        return true;
+        return isNum.matches();
     }
 
     public void registerListener(StageListener listener) {

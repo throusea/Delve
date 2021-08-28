@@ -1,7 +1,5 @@
 package model.affector;
 
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import model.dice.DiceGroup;
 
 public class DiceAffector extends Affector{
@@ -20,6 +18,5 @@ public class DiceAffector extends Affector{
         while(t-- > 0) {
             diceGroup.removeDice();
         }
-        System.out.println("start!");
     }
 }

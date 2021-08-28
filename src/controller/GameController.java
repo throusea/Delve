@@ -11,6 +11,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import listener.StageListener;
 import model.GameStation;
+import model.auto.AutoMonsterGroup;
 import model.dice.DiceGroup;
 import model.race.action.Action;
 import model.race.Group;
@@ -19,6 +20,7 @@ import model.race.character.Character;
 import model.race.character.*;
 import model.race.monster.Monster;
 import model.race.monster.MonsterGroup;
+import model.round.GameRound;
 import view.GamePanel;
 import view.component.*;
 import view.component.group.DiceGroupComponent;
@@ -32,6 +34,7 @@ import view.sceneShift.StageTabPane;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -68,6 +71,8 @@ public class GameController implements Initializable, StageListener {
     public GamePanel gamePanel;
 
     public Button addButton;
+
+    public AutoMonsterGroup autoMonGroup;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -124,12 +129,14 @@ public class GameController implements Initializable, StageListener {
     public void initMonsterGroup(Location loc) {
         MonsterGroupComponent monGroupCpt = new MonsterGroupComponent(loc.getBound(), Group.MONSTER);
         MonsterGroup monGroup = (MonsterGroup) currentStation.getRaceGroup(loc.getIndex());
+        monGroup.setRaceGroupCpt(monGroupCpt);
         monGroupCpt.registerListener(monGroup);
         gamePanel.add(monGroupCpt);
         initDice(loc.getIndex());
 
         loadMonsterData(monGroup);
         monGroupCpt.setStaticLocation(loc.getStaticLocation());
+        autoMonGroup = new AutoMonsterGroup(this, monGroup);
     }
 
     public void initDice(int loc) {
@@ -151,10 +158,10 @@ public class GameController implements Initializable, StageListener {
 
         currentStation = new GameStation();
         currentStation.registerListener(this);
-        ChapterLauncher.load(currentStation, 1,0);
+        ChapterLauncher.load(currentStation, 1,1);
         initCharacterGroup(new Location(0, mainPane.getBoundsInLocal()));
-        initCharacterGroup(new Location(1, mainPane.getBoundsInLocal()));
-        //initMonsterGroup(new Location(1, mainPane.getBoundsInLocal()));
+        //initCharacterGroup(new Location(1, mainPane.getBoundsInLocal()));
+        initMonsterGroup(new Location(1, mainPane.getBoundsInLocal()));
 
         clock.setVisible(true);
         clock.start();
@@ -180,6 +187,7 @@ public class GameController implements Initializable, StageListener {
     public void roll() {
         ArrayList<Integer> list = currentStation.rollDice();
         System.out.println(list);
+        System.out.println(getDiceGroup());
         if(list == null) {
             rollState(true);
         }
@@ -249,7 +257,7 @@ public class GameController implements Initializable, StageListener {
     @Override
     public void actionHandle() {
         List<Action> actions = currentStation.getRaceGroup(currentStation.getCurrentRound()).actionHandle();
-        System.out.println(actions.toArray());
+        System.out.println(Arrays.toString(actions.toArray()));
         currentStation.disposeAction(actions);
     }
 
@@ -257,7 +265,6 @@ public class GameController implements Initializable, StageListener {
     public void rollState(boolean value) {
         rollButton.setDisable(!value);
         if(!value) {
-            System.out.println("roll reset!");
             currentStation.getDiceGroup(currentStation.getCurrentRound()).reset();
             diceGroupCpts.get(currentStation.getCurrentRound()).setRandPos();
         }
@@ -271,15 +278,18 @@ public class GameController implements Initializable, StageListener {
     @Override
     public void selectState(boolean value) {
         System.out.println("Select " + value);
-        gamePanel.getCurrentRoundRaceGroup().getRaceComponentList().forEach(raceCpt -> {
-            raceCpt.setSelectDisabled(!value);
-        });
+        gamePanel.getCurrentRoundRaceGroup().getRaceComponentList().forEach(raceCpt -> raceCpt.setSelectDisabled(!value));
     }
 
     @Override
     public void nextStep() {
         currentStation.nextStep();
         clock.start();
+    }
+
+    @Override
+    public void autoState() {
+        if(getRound().isAuto()) autoMonGroup.autoAction(getRound().getCurrentStage());
     }
 
     @Override
@@ -294,38 +304,8 @@ public class GameController implements Initializable, StageListener {
 
     @Override
     public DiceGroup getDiceGroup() {
-        return currentStation.getDiceGroup(currentStation.getCurrentRound());
+        return currentStation.getDiceGroup();
     }
 
-//    public void initRaceGroup(int gameMode) {
-//        Bounds bounds = mainPane.getBoundsInLocal();
-//
-//        RaceGroupComponent chrGroupCpt1 = new RaceGroupComponent(new Bound(0,0, bounds.getWidth()/2, bounds.getHeight()/2), Group.HUMAN);
-//        RaceGroupComponent chrGroupCpt2 = new RaceGroupComponent(new Bound(bounds.getWidth()/2, bounds.getHeight()/2, bounds.getWidth()/2, bounds.getHeight()/2), Group.HUMAN);
-//
-//        chrGroupCpt1.register(currentStation.getRaceGroup(0));
-//        chrGroupCpt2.register(currentStation.getRaceGroup(1));
-//
-//        gamePanel.add(chrGroupCpt1);
-//        gamePanel.add(chrGroupCpt2);
-//
-//        GameModifierComponent GMCpt1, GMCpt2;
-//        GMCpt1 = new GameModifierComponent(currentStation.getRaceGroup(0), 2,300);
-//        GMCpt2 = new GameModifierComponent(currentStation.getRaceGroup(1),2,500);
-//        GMCpt1.registerListener(this);
-//        GMCpt2.registerListener(this);
-//        rightPane.getChildren().add(GMCpt1);
-//        rightPane.getChildren().add(GMCpt2);
-//
-//        addCharacter(new Fighter(),0);
-//        addCharacter(new Fighter(),1);
-//        addCharacter(new Rogue(),0);
-//        addCharacter(new Rogue(),1);
-//        addCharacter(new Wizard(), 0);
-//        addCharacter(new Wizard(), 1);
-//        addCharacter(new Cleric(),0);
-//        addCharacter(new Cleric(),1);
-//        chrGroupCpt1.setStaticLocation(0,0);
-//        chrGroupCpt2.setStaticLocation(bounds.getWidth() - 680, bounds.getHeight() - 65);
-//    }
+    public GameRound getRound() {return currentStation.getRound(currentStation.getCurrentRound()); }
 }

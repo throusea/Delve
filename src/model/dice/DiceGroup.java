@@ -1,7 +1,5 @@
 package model.dice;
 
-import model.dice.Dice;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +19,7 @@ public class DiceGroup {
 
     public ArrayList<Integer> roll() {
         if(diceCount == 0) return null;
-        ArrayList<Integer> dotList = new ArrayList();
+        ArrayList<Integer> dotList = new ArrayList<>();
         diceList.forEach(dice -> {
             dice.roll();
             dotList.add(dice.getDot());
@@ -44,7 +42,7 @@ public class DiceGroup {
 
     public void removeDice() {
         Dice dice = diceList.remove(0);
-        diceList.forEach(dice1 -> System.out.println(dice1));
+        diceList.forEach(System.out::println);
         dice.diceCpt.setDisable(true);
     }
 
@@ -64,10 +62,9 @@ public class DiceGroup {
 
     public List<Dice> getList(){ return diceList; }
 
-    @Override
     public String toString() {
-        String s = "";
-        diceList.forEach(dice -> s.concat(String.valueOf(dice.getDot())));
-        return s;
+        StringBuffer s = new StringBuffer();
+        diceList.forEach(dice -> s.append(dice.getDot()));
+        return s.toString();
     }
 }
