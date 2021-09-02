@@ -11,6 +11,7 @@ import model.dice.DiceGroup;
 import model.race.Race;
 import model.race.RaceGroup;
 import model.round.GameStage;
+import view.component.RaceComponent;
 
 public class AutoRaceGroup implements AutoListener {
 
@@ -21,6 +22,8 @@ public class AutoRaceGroup implements AutoListener {
     protected RaceGroup raceGroup;
 
     protected DiceGroup diceGroup;
+
+    protected boolean isReadyAttack;
 
     public AutoRaceGroup(GameController controller, RaceGroup raceGroup) {
         this.stageListener = controller;
@@ -54,5 +57,10 @@ public class AutoRaceGroup implements AutoListener {
 
     public void registerListener(StageListener listener) {
         this.stageListener = listener;
+    }
+
+    public boolean isReadyAttack() { return isReadyAttack; }
+
+    public void attack(RaceComponent object) {
     }
 }

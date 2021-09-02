@@ -3,8 +3,9 @@ package model.race.monster;
 public class Kobold extends Monster{
 
     public Kobold() {
-        getHealthProperty().set(3);
-        getMaxHealthProperty().set(3);
+        setMaxHealth(1);
+        setHealth(1);
+        hitDots.add(6);
     }
 
     @Override

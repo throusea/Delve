@@ -6,8 +6,8 @@ public class Orc extends Monster{
         super();
         getHealthProperty().set(2);
         getMaxHealthProperty().set(2);
-        keyDots.add(5);
-        keyDots.add(6);
+        hitDots.add(5);
+        hitDots.add(6);
     }
 
     @Override

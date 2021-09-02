@@ -10,6 +10,7 @@ public class EndStage extends GameStage{
         listener.reset();
         listener.attackState(false);
         listener.autoState();
+        listener.gameState();
         listener.nextStep();
     }
 

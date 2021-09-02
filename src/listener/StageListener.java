@@ -18,6 +18,8 @@ public interface StageListener extends Listener {
 
     void autoState();
 
+    void gameState();
+
     void reset();
 
     void addAffector();

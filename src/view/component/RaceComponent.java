@@ -2,6 +2,8 @@ package view.component;
 
 import com.sun.javafx.geom.Vec2d;
 import controller.AnimationController;
+import javafx.animation.SequentialTransition;
+import javafx.animation.Timeline;
 import javafx.beans.property.*;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -10,6 +12,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import listener.RaceListener;
 import model.animation.*;
+import model.animation.effect.MagicCircle;
 import model.dice.Dice;
 import model.race.action.Action;
 import model.race.Mark;
@@ -27,7 +30,7 @@ public class RaceComponent extends Pane  {
 
     DoubleProperty centX, centY;
 
-    boolean selectDisabled;
+    boolean selectDisable;
 
     BooleanProperty highlighted, isReadyAction, isDead;
 
@@ -67,7 +70,7 @@ public class RaceComponent extends Pane  {
         centX.bind(layoutXProperty().add(width/2));
         centY.bind(layoutYProperty().add(height/2));
 
-        selectDisabled = true;
+        selectDisable = true;
         pressResponse = new SimpleBooleanProperty(false);
         dragResponse = new SimpleBooleanProperty(false);
 
@@ -106,7 +109,7 @@ public class RaceComponent extends Pane  {
             gc.setStroke(newValue ? Color.GRAY: Color.BLACK);
             gc.fillText(listener.toString(), 0, 30);
             gc.strokeRect(0,0,width, height);
-            selectDisabled = false;
+            selectDisable = false;
             setDisable(newValue);
         });
     }
@@ -182,11 +185,11 @@ public class RaceComponent extends Pane  {
         listener.setIsDead(value);
     }
 
-    public void setSelectDisabled(boolean value) { selectDisabled = isDead.get() || value; }
+    public void setSelectDisable(boolean value) { selectDisable = isDead.get() || value; }
 
     public void setHighlighted(boolean value) { highlighted.set(value); }
 
-    public boolean isSelectDisabled() { return selectDisabled; }
+    public boolean SelectDisable() { return selectDisable; }
 
     public void action(RaceComponent raceCpt) {
         Action action = getRace().action;
@@ -196,8 +199,11 @@ public class RaceComponent extends Pane  {
     public void action(RaceGroupComponent raceGroupCpt) {
         Action action = getRace().action;
         if(action != null) {
-            action.run(raceGroupCpt.getRaceGroup());
-            new Explosion((Pane)getParent(), getCentX(), getCentY(), 1000).start();
+            SequentialTransition seq = new SequentialTransition();
+            Timeline timeline =  new Explosion((Pane)getParent(), getCentX(), getCentY(), 1000).getTimeline();
+            seq.getChildren().addAll(new MagicCircle((Pane) getParent(), getCentX(),getCentY()).getTransition(),timeline);
+            timeline.setOnFinished(event -> action.run(raceGroupCpt.getRaceGroup()));
+            seq.playFromStart();
         }
     }
 

@@ -7,4 +7,8 @@ public class CharacterGroup extends RaceGroup {
     public CharacterGroup(Group group) {
         super(group);
     }
+
+    public CharacterGroup(Group human, int diceNum) {
+        super(human, diceNum);
+    }
 }

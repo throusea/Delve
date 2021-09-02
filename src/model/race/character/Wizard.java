@@ -19,8 +19,11 @@ public class Wizard extends Character{
     private Dice keyDice;
 
     public Wizard() {
-        setMaxHealth(4);
-        setHealth(4);
+        super(4);
+    }
+
+    public Wizard(int maxHealth) {
+        super(maxHealth);
     }
 
     @Override

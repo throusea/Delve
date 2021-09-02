@@ -3,6 +3,7 @@ package model.auto;
 import controller.GameController;
 import model.race.monster.MonsterGroup;
 import model.round.GameStage;
+import view.component.RaceComponent;
 
 public class AutoMonsterGroup extends AutoRaceGroup{
 
@@ -25,9 +26,11 @@ public class AutoMonsterGroup extends AutoRaceGroup{
             }
             case "AttackStage": {
                 autoSelect();
+                isReadyAttack = true;
                 break;
             }
             case "EndStage":{
+                isReadyAttack = false;
                 break;
             }
         }
@@ -39,5 +42,13 @@ public class AutoMonsterGroup extends AutoRaceGroup{
         MonsterGroup monsterGroup = (MonsterGroup) raceGroup;
         monsterGroup.setDiceString(diceGroup.toString());
         monsterGroup.allocateDices();
+    }
+
+    @Override
+    public void attack(RaceComponent object) {
+        if(isReadyAttack) {
+            MonsterGroup monGroup = (MonsterGroup) raceGroup;
+            monGroup.attack(object);
+        }
     }
 }

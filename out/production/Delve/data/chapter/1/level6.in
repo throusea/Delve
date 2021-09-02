@@ -2,3 +2,6 @@
 #Generation NORMAL
 #Environment NORMAL
 #Fight DEFAULT
+#CharacterGroup 4 DiceNum 6 loc 0
+#MonsterGroup 4 DiceNum 6 loc 1
+#Monster Dragon

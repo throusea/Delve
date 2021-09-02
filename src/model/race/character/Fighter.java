@@ -10,9 +10,11 @@ public class Fighter extends Character{
     public static final int BASIC_ATTACK = 1;
 
     public Fighter() {
-        super();
-        setMaxHealth(6);
-        setHealth(6);
+        super(6);
+    }
+
+    public Fighter(int maxHealth) {
+        super(maxHealth);
     }
 
     @Override

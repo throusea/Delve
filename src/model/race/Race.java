@@ -29,18 +29,12 @@ public class Race implements RaceListener {
     public ActionMode actionMode = ActionMode.TO_ENEMY;
 
     public Race() {
-
         markList = new ArrayList<>();
-
         diceString = new SimpleStringProperty();
-
         healthProperty = new SimpleIntegerProperty();
         maxHealthProperty = new SimpleIntegerProperty();
-
         isDead = new SimpleBooleanProperty();
-
         actionCountProperty = new SimpleIntegerProperty();
-
         damageProperty = new SimpleIntegerProperty();
     }
 
@@ -97,8 +91,8 @@ public class Race implements RaceListener {
     }
 
     public void reset() {
-        actionCountProperty.set(0);
-        damageProperty.set(0);
+        setActionCount(0);
+        setDamage(0);
         clearMark();
         raceComponent.setIsReadyAction(false);
         raceComponent.setPressResponse(false);

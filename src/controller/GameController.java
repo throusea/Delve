@@ -3,6 +3,7 @@ package controller;
 import data.chapter.ChapterLauncher;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
@@ -13,6 +14,7 @@ import listener.StageListener;
 import model.GameStation;
 import model.auto.AutoMonsterGroup;
 import model.dice.DiceGroup;
+import model.race.RaceGroup;
 import model.race.action.Action;
 import model.race.Group;
 import model.race.Location;
@@ -21,26 +23,25 @@ import model.race.character.*;
 import model.race.monster.Monster;
 import model.race.monster.MonsterGroup;
 import model.round.GameRound;
+import util.NextUtil;
 import view.GamePanel;
 import view.component.*;
 import view.component.group.DiceGroupComponent;
 import view.component.group.MonsterGroupComponent;
 import view.component.group.RaceGroupComponent;
 import view.component.modifier.GameModifierComponent;
-import view.sceneShift.CardLayout;
-import view.sceneShift.GlassPane;
-import view.sceneShift.MenuPane;
-import view.sceneShift.StageTabPane;
+import view.sceneShift.*;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
 public class GameController implements Initializable, StageListener {
 
     public static CardLayout cardLayout;
+
+    public final static int ADVENTURE = 1, PVP = 2;
 
     @FXML
     public Pane mainPane, leftPane, rightPane, bottomPane;
@@ -54,12 +55,7 @@ public class GameController implements Initializable, StageListener {
     @FXML
     public Button rollButton;
 
-    public GlassPane glassPane;
-
-    public StageTabPane stageTabPane;
-
-    public MenuPane menuPane;
-
+    public Pane glassPane, stageTabPane, menuPane, selectPane;
     public List<GameStation> stationList;
 
     public List<DiceGroupComponent> diceGroupCpts;
@@ -74,6 +70,8 @@ public class GameController implements Initializable, StageListener {
 
     public AutoMonsterGroup autoMonGroup;
 
+    public int chapterIndex = 1, levelIndex = 1, currentGameMode;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         gamePanel = new GamePanel(mainPane);
@@ -81,21 +79,15 @@ public class GameController implements Initializable, StageListener {
         clock = new GameClock();
         clock.registerListener(this);
 
-//        Text text = new Text();
-//        gamePane.setOnMouseMoved(event -> {
-//            text.setText(event.getPickResult().getIntersectedNode().toString());
-//            text.relocate(event.getX() + 5, event.getY() + 5);
-//        });
-//        skPane.getChildren().add(text);
-
         glassPane = new GlassPane();
         stageTabPane = new StageTabPane();
         menuPane = new MenuPane();
+        selectPane = new SelectPane(this);
         leftPane.getChildren().add(clock);
         skPane.setManaged(false);
         skPane.setOnKeyPressed(event -> {
             if(event.getCode() == KeyCode.ESCAPE) {
-                glassPane.show();
+                ((GlassPane)glassPane).show();
                 if(!glassPane.isDisable()) clock.pause();
                 else clock.run();
             }
@@ -103,9 +95,12 @@ public class GameController implements Initializable, StageListener {
         skPane.getChildren().add(stageTabPane);
         skPane.getChildren().add(glassPane);
         skPane.getChildren().add(menuPane);
+        skPane.getChildren().add(selectPane);
+
         cardLayout = new CardLayout();
         cardLayout.add(gamePane, "Game");
         cardLayout.add(menuPane, "Menu");
+        cardLayout.add(selectPane, "Select");
         cardLayout.show("Menu");
     }
 
@@ -137,6 +132,20 @@ public class GameController implements Initializable, StageListener {
         loadMonsterData(monGroup);
         monGroupCpt.setStaticLocation(loc.getStaticLocation());
         autoMonGroup = new AutoMonsterGroup(this, monGroup);
+        gamePanel.registerAutoListener(autoMonGroup);
+    }
+
+    public void initGroup() {
+        if(currentGameMode == ADVENTURE) {
+            ChapterLauncher.load(currentStation, chapterIndex, levelIndex);
+            initCharacterGroup(new Location(0, mainPane.getBoundsInLocal()));
+            initMonsterGroup(new Location(1, mainPane.getBoundsInLocal()));
+        }
+        if(currentGameMode == PVP) {
+            ChapterLauncher.load(currentStation, chapterIndex,levelIndex);
+            initCharacterGroup(new Location(0, mainPane.getBoundsInLocal()));
+            initCharacterGroup(new Location(1, mainPane.getBoundsInLocal()));
+        }
     }
 
     public void initDice(int loc) {
@@ -155,22 +164,30 @@ public class GameController implements Initializable, StageListener {
 
     public void initStation() {
         diceGroupCpts = new ArrayList<>();
-
         currentStation = new GameStation();
         currentStation.registerListener(this);
-        ChapterLauncher.load(currentStation, 1,1);
-        initCharacterGroup(new Location(0, mainPane.getBoundsInLocal()));
-        //initCharacterGroup(new Location(1, mainPane.getBoundsInLocal()));
-        initMonsterGroup(new Location(1, mainPane.getBoundsInLocal()));
-
-        clock.setVisible(true);
-        clock.start();
-        currentStation.playFromStart();
     }
 
-    public void loadStation(CharacterGroup characterGroup) {
+    public void initGame() {
         initStation();
+        if(currentGameMode == ADVENTURE) {
+            chapterIndex = 1;
+            levelIndex = 1;
+        }
+        if(currentGameMode == PVP) {
+            chapterIndex = 1;
+            levelIndex = 0;
+        }
+        initGroup();
+        gameStart();
+    }
+
+    public void loadGame(CharacterGroup characterGroup) {
+        initStation();
+
+        initGroup();
         currentStation.getRaceGroup(0).setHealth(characterGroup);
+        gameStart();
     }
 
     public void clearStation() {
@@ -181,7 +198,8 @@ public class GameController implements Initializable, StageListener {
 
     public void nextStation() {
         clearStation();
-        loadStation((CharacterGroup) currentStation.getRaceGroup(0));
+        levelIndex = NextUtil.next(levelIndex, 1, 6);
+        loadGame((CharacterGroup) currentStation.getRaceGroup(0));
     }
 
     public void roll() {
@@ -194,27 +212,32 @@ public class GameController implements Initializable, StageListener {
     }
 
     public void loadCharacterData(CharacterGroup chrGroup) {
-        addCharacter(new Fighter(),chrGroup);
-        addCharacter(new Rogue(),chrGroup);
-        addCharacter(new Wizard(), chrGroup);
-        addCharacter(new Cleric(),chrGroup);
+        if(currentGameMode == ADVENTURE) {
+            addCharacter(new Fighter(5), chrGroup);
+            addCharacter(new Rogue(3), chrGroup);
+            addCharacter(new Wizard(1), chrGroup);
+            addCharacter(new Cleric(3), chrGroup);
+        }
+        if(currentGameMode == PVP) {
+            addCharacter(new Fighter(6), chrGroup);
+            addCharacter(new Rogue(4), chrGroup);
+            addCharacter(new Wizard(4), chrGroup);
+            addCharacter(new Cleric(5), chrGroup);
+        }
     }
 
     public void loadMonsterData(MonsterGroup monGroup) {
-        List<Monster> monsters = ChapterLauncher.loadMonster(1,1);
+        List<Monster> monsters = ChapterLauncher.loadMonster(chapterIndex,levelIndex);
         monsters.forEach(monster -> addMonster(monster, monGroup));
-    }
-
-    public void addStation(GameStation station) {
-        stationList.add(station);
     }
 
     public void setCurrentStation(int stationId) {
         currentStation = stationList.get(stationId);
     }
 
-    public void gameStart(int id) {
-        setCurrentStation(id);
+    public void gameStart() {
+        clock.setVisible(true);
+        clock.start();
         currentStation.playFromStart();
     }
 
@@ -257,7 +280,6 @@ public class GameController implements Initializable, StageListener {
     @Override
     public void actionHandle() {
         List<Action> actions = currentStation.getRaceGroup(currentStation.getCurrentRound()).actionHandle();
-        System.out.println(Arrays.toString(actions.toArray()));
         currentStation.disposeAction(actions);
     }
 
@@ -278,7 +300,7 @@ public class GameController implements Initializable, StageListener {
     @Override
     public void selectState(boolean value) {
         System.out.println("Select " + value);
-        gamePanel.getCurrentRoundRaceGroup().getRaceComponentList().forEach(raceCpt -> raceCpt.setSelectDisabled(!value));
+        gamePanel.getCurrentRoundRaceGroup().getRaceComponentList().forEach(raceCpt -> raceCpt.setSelectDisable(!value));
     }
 
     @Override
@@ -290,6 +312,19 @@ public class GameController implements Initializable, StageListener {
     @Override
     public void autoState() {
         if(getRound().isAuto()) autoMonGroup.autoAction(getRound().getCurrentStage());
+    }
+
+    @Override
+    public void gameState() {
+        RaceGroup raceGroup = currentStation.getRaceGroup(currentStation.getCurrentRound());
+        if(raceGroup.getTotalHealth() == 0) {
+            if(raceGroup instanceof CharacterGroup) {
+                new Alert(Alert.AlertType.CONFIRMATION, "You lose!").show();
+            }
+            if(raceGroup instanceof MonsterGroup) {
+                new Alert(Alert.AlertType.CONFIRMATION, "You win!").show();
+            }
+        }
     }
 
     @Override

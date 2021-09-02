@@ -1,4 +1,4 @@
-package listener.change;
+package listener;
 
 import listener.Listener;
 import model.race.RaceGroup;

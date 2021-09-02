@@ -3,7 +3,7 @@ package view.component.group;
 import com.sun.javafx.geom.Vec2d;
 import controller.AnimationController;
 import javafx.scene.layout.Pane;
-import listener.change.RaceGroupListener;
+import listener.RaceGroupListener;
 import model.animation.FadeIn;
 import model.race.Group;
 import model.race.RaceGroup;
@@ -34,7 +34,7 @@ public class RaceGroupComponent extends GroupComponent {
     public void add(RaceComponent raceComponent, Pane pane) {
         raceComponentList.add(raceComponent);
         setRandPos(raceComponent);
-        raceComponent.setSelectDisabled(!isRounding());
+        raceComponent.setSelectDisable(!isRounding());
         pane.getChildren().add(raceComponent);
         AnimationController.addGameTime(new FadeIn(raceComponent, 500,false));
         //new FadeIn(raceComponent,500).start();

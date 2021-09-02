@@ -8,6 +8,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
+import listener.AutoListener;
 import listener.PanelListener;
 import model.animation.Mover;
 import model.dice.Dice;
@@ -22,11 +23,13 @@ import java.util.List;
 
 public class GamePanel implements PanelListener {
 
-    public static final int NORMAL = 1, CHILD = 2, WAIT = 3, FORBID = 4;
+    //public static final int NORMAL = 1, CHILD = 2, WAIT = 3, FORBID = 4;
 
     ObservableList<Node> nodeList;
 
     Pane mainPane;
+
+    AutoListener autoListener;
 
     List<DiceGroupComponent> diceGroupCpts;
 
@@ -34,7 +37,7 @@ public class GamePanel implements PanelListener {
 
     private double x, y, initX, initY;
 
-    private boolean isDragged;
+    private boolean lockIn;
 
     private Node node;
 
@@ -46,12 +49,12 @@ public class GamePanel implements PanelListener {
 
         mainPane.setOnMouseDragged(event -> {
 
-            if(node instanceof DiceComponent && isDragged) {
+            if(node instanceof DiceComponent && lockIn) {
                 DiceComponent dice = (DiceComponent) node;
                 dice.setPos(dice.getLayoutX() + event.getX() - x, dice.getLayoutY() + event.getY() - y);
             }
 
-            if(node instanceof RaceComponent && isDragged) {
+            if(node instanceof RaceComponent && lockIn) {
                 RaceComponent race = (RaceComponent) node;
                 race.setPos(race.getLayoutX() + event.getX() - x, race.getLayoutY() + event.getY() - y);
             }
@@ -64,17 +67,9 @@ public class GamePanel implements PanelListener {
 
             node = event.getPickResult().getIntersectedNode();
 
-            switch (getNodeAns()) {
-                case CHILD: {
-                    node = node.getParent();
-                } case NORMAL: {
-                    isDragged = true;
-                    initX = node.getLayoutX();
-                    initY = node.getLayoutY();
-                    break;
-                }
-                default:
-            }
+            if(findFatherNode()) lockIn = true;
+            initX = node.getLayoutX();
+            initY = node.getLayoutY();
         });
 
         mainPane.setOnMouseReleased(event -> {
@@ -84,11 +79,11 @@ public class GamePanel implements PanelListener {
                 AnimationController.addGameTime(new Mover(node, 500, new Vec2d(initX, initY)));
                 //new Mover(node, 500, new Vec2d(initX, initY)).start();
             }
-            if(!eventAns && isDragged && !legalPosition()) {
+            if(!eventAns && lockIn && !legalPosition()) {
                 AnimationController.addGameTime(new Mover(node, 500, new Vec2d(initX, initY)));
                 //new Mover(node, 500, new Vec2d(initX, initY)).start();
             }
-            isDragged = false;
+            lockIn = false;
         });
     }
 
@@ -117,22 +112,20 @@ public class GamePanel implements PanelListener {
         return null;
     }
 
-    public RaceGroupComponent getRaceGroupCpt(int index) {
-        return raceGroupCpts.get(index);
-    }
-
-    public int getNodeAns() {
-        if(node instanceof DiceComponent) return NORMAL;
-        if(node instanceof RaceComponent) return ((RaceComponent) node).isSelectDisabled() ? WAIT : NORMAL;
-        while(node instanceof Text || node instanceof Canvas || node instanceof Label) node = node.getParent();
-        if(node instanceof RaceComponent) return ((RaceComponent) node).isSelectDisabled() ? WAIT : NORMAL;
-        return FORBID;
+    public boolean findFatherNode() {
+        if(node instanceof DiceComponent) return true;
+        while(node instanceof Text || node instanceof Canvas || node instanceof Label) {
+            node = node.getParent();
+            if(node instanceof DiceComponent) break;
+        }
+        if(node instanceof RaceComponent) return !((RaceComponent) node).SelectDisable();
+        return node instanceof DiceComponent;
     }
 
     public boolean handleEvent() {
         if(node instanceof DiceComponent) {
             CharacterComponent chr = (CharacterComponent) detectRace(true, null);
-            if(chr != null && !chr.isSelectDisabled()) {
+            if(chr != null && !chr.SelectDisable()) {
                 chr.addDice((DiceComponent) node);
                 return true;
             }
@@ -141,21 +134,35 @@ public class GamePanel implements PanelListener {
         if(node instanceof CharacterComponent) {
             RaceComponent subject = (RaceComponent) node;
             RaceComponent object = detectRace(false, subject);
+            System.out.println(subject);
+            System.out.println(object);
 
+            System.out.printf("init %.1f %.1f\n", initX, initY);
+            System.out.printf("node %.1f %.1f\n", node.getLayoutX(), node.getLayoutY());
+            System.out.println(Vec2d.distance(initX,initY,node.getLayoutX(),node.getLayoutY()) <= 3);
+            if(Vec2d.distance(initX,initY,node.getLayoutX(),node.getLayoutY()) <= 3) {
+                monAttack(subject);
+            }
             if(subject.getPressResponse() && Vec2d.distance(initX,initY,node.getLayoutX(),node.getLayoutY()) <= 3) {
-                if(subject.getDragResponse()) subject.action(subject);
+                if(subject.getDragResponse()) {
+                    subject.action(subject);
+                }
                 else raceGroupCpts.forEach(raceGroupCpt -> {
                         if (raceGroupCpt != getCurrentRoundRaceGroup() && subject.getActionMode() == ActionMode.TO_ENEMY)
                             subject.action(raceGroupCpt);
                         if (raceGroupCpt == getCurrentRoundRaceGroup() && subject.getActionMode() == ActionMode.TO_PARTNER)
                             subject.action(raceGroupCpt);
                 });
-            }else if(object != null && subject.getDragResponse() && isDragged) {
+            }else if(object != null && object.isHighlighted() && subject.getDragResponse() && lockIn) {
                 subject.action(object);
                 return true;
             }
         }
         return false;
+    }
+
+    public void monAttack(RaceComponent object) {
+        autoListener.attack(object);
     }
 
     public RaceComponent detectRace(boolean isCurrentRoundRaceGroup, RaceComponent keyRace) {
@@ -199,5 +206,9 @@ public class GamePanel implements PanelListener {
     @Override
     public void moveDice(Dice dice, Race race) {
 
+    }
+
+    public void registerAutoListener(AutoListener autoListener) {
+        this.autoListener = autoListener;
     }
 }

@@ -19,9 +19,12 @@ public class Cleric extends Character {
     Dice keyDice;
 
     public Cleric() {
-        super();
-        setMaxHealth(5);
-        setHealth(5);
+        super(5);
+        actionMode = ActionMode.TO_PARTNER;
+    }
+
+    public Cleric(int maxHealth) {
+        super(maxHealth);
         actionMode = ActionMode.TO_PARTNER;
     }
 

@@ -85,7 +85,7 @@ public class GameStation {
     }
 
     public void disposeAction(List<Action> actions) {
-        if(actions == null) return;
+        if(actions == null || actions.isEmpty()) return;
         actions.forEach(action -> {
             if(action.getAction() == ActionMode.TO_ENEMY) {
                 for(int i = 0 ; i < raceGroupList.size(); i++)

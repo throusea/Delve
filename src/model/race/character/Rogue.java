@@ -16,9 +16,11 @@ public class Rogue extends Character{
     private Dice keyDice;
 
     public Rogue() {
-        super();
-        setMaxHealth(4);
-        setHealth(4);
+        super(4);
+    }
+
+    public Rogue(int maxHealth) {
+        super(maxHealth);
     }
 
     @Override

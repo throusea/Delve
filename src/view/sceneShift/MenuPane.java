@@ -17,31 +17,9 @@ public class MenuPane extends Pane {
         setPrefSize(1280,800);
         String[] strings = new String[]{"New Game", "Continue", "Set", "Exit"};
         buttonGroup = new ButtonGroup(this, strings);
-        buttonGroup.addShowListener("New Game", "Game");
-        buttonGroup.addShowListener("Continue", "");
+        buttonGroup.addShowListener("New Game", "Select");
+        buttonGroup.addShowListener("Continue", "Game");
         buttonGroup.addShowListener("Set", "Set");
         buttonGroup.getLabel("Exit").setOnMouseClicked(event -> System.exit(0));
-    }
-
-    public void addMouseListener(Label label) {
-        label.setOnMouseClicked(event -> {
-            switch (label.getText()) {
-                case "New Game": {
-                    cardLayout.show("Game");
-                    break;
-                }
-                case "Continue": {
-                    cardLayout.show("");
-                    break;
-                }
-                case "Set": {
-                    cardLayout.show("Set");
-                    break;
-                }
-                case "Exit": {
-                    break;
-                }
-            }
-        });
     }
 }

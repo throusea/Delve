@@ -35,14 +35,14 @@ public class ChapterLauncher {
     public static CharacterGroup loadCharacterGroup(String s) {
         String[] info = s.split(" ");
         if(info[0].equals("#CharacterGroup")) {
-            return new CharacterGroup(Group.HUMAN);
+            return new CharacterGroup(Group.HUMAN, Integer.parseInt(info[3]));
         }
         return null;
     }
 
     public static MonsterGroup loadMonsterGroup(String s) {
         String[] info = s.split(" ");
-        if(info[0].equals("#MonsterGroup")) return new MonsterGroup(Group.MONSTER);
+        if(info[0].equals("#MonsterGroup")) return new MonsterGroup(Group.MONSTER,Integer.parseInt(info[3]));
         return null;
     }
 

@@ -2,8 +2,8 @@
 #Generation NORMAL
 #Environment NORMAL
 #Fight DEFAULT
-#CharacterGroup 4 #loc 0
-#MonsterGroup 3 #loc 1
+#CharacterGroup 4 DiceNum 6 loc 0
+#MonsterGroup 3 DiceNum 6 loc 1
 #Monster Orc
 #Monster Orc
 #Monster Orc

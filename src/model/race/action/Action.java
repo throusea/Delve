@@ -1,5 +1,6 @@
 package model.race.action;
 
+import model.affector.Affector;
 import model.race.Race;
 import model.race.RaceGroup;
 import model.race.character.Cleric;
@@ -10,6 +11,8 @@ public class Action {
 
     ActionMode action;
     GoalMode goal;
+
+    Affector affector;
     public Action(Race subject, ActionMode action, GoalMode goal) {
         this.subject = subject;
         this.action = action;
@@ -22,6 +25,12 @@ public class Action {
 
     public GoalMode getGoal() {
         return goal;
+    }
+
+    public Race getSubject() { return subject; }
+
+    public void setAffector(Affector affector) {
+        this.affector = affector;
     }
 
     public void run(Race object) {

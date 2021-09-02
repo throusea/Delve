@@ -1,6 +1,6 @@
 package model.race;
 
-import listener.change.RaceGroupListener;
+import listener.RaceGroupListener;
 import model.race.action.Action;
 import view.component.group.RaceGroupComponent;
 
@@ -81,7 +81,7 @@ public class RaceGroup implements RaceGroupListener {
     }
 
     public void setHealth(RaceGroup raceGroup) {
-        raceList.forEach(race -> raceGroup.get(race.toString()).setHealth(race.getHealthProperty().get()));
+        raceList.forEach(race -> race.setHealth(raceGroup.get(race.toString()).getHealth()));
     }
 
     public void setRaceGroupCpt(RaceGroupComponent raceGroupComponent) {
@@ -103,6 +103,14 @@ public class RaceGroup implements RaceGroupListener {
 
     public void reset() {
         raceList.forEach(Race::reset);
+    }
+
+    public int getTotalHealth() {
+        int totalHealth = 0;
+        for (Race race : raceList) {
+            totalHealth += race.getHealthProperty().get();
+        }
+        return totalHealth;
     }
 
     @Override

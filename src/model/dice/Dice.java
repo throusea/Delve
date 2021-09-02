@@ -14,24 +14,20 @@ public class Dice implements DiceListener {
 
     public IntegerProperty dot;
 
-    public BooleanProperty checked;
-
     public DiceComponent diceCpt;
 
     public Dice() {
         dot = new SimpleIntegerProperty(-1);
-        checked = new SimpleBooleanProperty(true);
     }
 
     public Dice(int dot) {
         this.dot = new SimpleIntegerProperty(dot);
-        checked = new SimpleBooleanProperty(true);
     }
 
     public void roll() {
-        if(checked.get()) {
+        if(diceCpt.getChecked()) {
             dot.set(RandomUtil.nextInt(1,6));
-            AnimationController.addGameTime(new DiceDisappear(diceCpt, 500, true));
+            diceCpt.roll(dot.get());
         }
     }
 
@@ -47,7 +43,8 @@ public class Dice implements DiceListener {
 
     public void clear() {
         dot.set(-1);
-        checked.set(true);
+        diceCpt.clear();
+        diceCpt.setChecked(true);
     }
 
     public boolean isEmpty() { return dot == null; }

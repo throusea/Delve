@@ -8,7 +8,6 @@ import view.component.DiceComponent;
 
 public class DiceDisappear extends Animation {
 
-
     public DiceDisappear(DiceComponent diceComponent, double millis, boolean autoReverse) {
         super(diceComponent, millis);
 
@@ -36,7 +35,7 @@ public class DiceDisappear extends Animation {
     }
 
     @Override
-    protected Void call() throws Exception {
+    protected Void call() {
         timeline.playFromStart();
         return null;
     }

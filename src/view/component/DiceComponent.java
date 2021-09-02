@@ -1,15 +1,18 @@
 package view.component;
 
 import com.sun.javafx.geom.Vec2d;
+import javafx.animation.Timeline;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import listener.DiceListener;
-import listener.change.ColorChangeListener;
-import listener.change.DotChangeListener;
+import model.animation.DiceAppear;
+import model.animation.DiceDisappear;
 import model.dice.Dice;
 
 import static util.BorderUtil.createBorder;
@@ -23,22 +26,33 @@ public class DiceComponent extends Label {
 
     private BooleanProperty checked;
 
-    private double x, y;
+    private String s;
 
     public DiceComponent() {
         dot = new SimpleIntegerProperty();
         checked = new SimpleBooleanProperty(true);
-        setId("Dice");
+        s = "";
         setPrefSize(50,50);
-        setText("Dice");
         setOnMousePressed(evt -> {
             if(dot.get() != -1)
             shiftChecked();
         });
-        setBorder(createBorder(Color.BLACK));
+        checked.addListener((observable, oldValue, newValue) -> {
+            if(!newValue) s = "A";
+            else s = "";
+            Image image = new Image("file:src/data/dice/" + dot.get() + s + ".png");
+            setGraphic(new ImageView(image));
+        });
+    }
 
-        dot.addListener(new DotChangeListener(this));
-        checked.addListener(new ColorChangeListener(this, Color.WHITE, Color.BLACK));
+    public void roll(int dot) {
+        Image image = new Image("file:src/data/dice/" + dot + s + ".png");
+        Timeline timeline = new DiceDisappear(this, 500, false).getTimeline();
+        timeline.setOnFinished(event -> {
+            setGraphic(new ImageView(image));
+            new DiceAppear(this, 500).start();
+        });
+        timeline.playFromStart();
     }
 
     public void setRandPos(double boundX, double boundY) {
@@ -62,6 +76,10 @@ public class DiceComponent extends Label {
         setLayoutY(y);
     }
 
+    public void setChecked(boolean value) {
+        checked.set(value);
+    }
+
     public Integer getDot() {
         return dot.get();
     }
@@ -74,10 +92,15 @@ public class DiceComponent extends Label {
 
     public void setSize(int size) { setPrefSize(size, size); }
 
+    public void clear() {
+        Image image = new Image("file:src/data/dice/0.png");
+        setGraphic(new ImageView(image));
+        new DiceAppear(this, 1000).start();
+    }
+
     public void registerListener(Dice listener) {
         this.listener = listener;
         dot.bind(listener.dot);
-        checked.bindBidirectional(listener.checked);
     }
 
     private void shiftChecked() {

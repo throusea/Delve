@@ -7,4 +7,10 @@ public class Character extends Race {
     public Character() {
         super();
     }
+
+    public Character(int maxHealth) {
+        super();
+        setMaxHealth(maxHealth);
+        setHealth(maxHealth);
+    }
 }
