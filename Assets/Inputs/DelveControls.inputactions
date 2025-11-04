@@ -1,0 +1,88 @@
+{
+    "version": 1,
+    "name": "DelveControls",
+    "maps": [
+        {
+            "name": "GamePlay",
+            "id": "0d08b650-4d7d-4dfb-8c93-329ad50a96b4",
+            "actions": [
+                {
+                    "name": "RollDice",
+                    "type": "Button",
+                    "id": "15af37bf-1b09-467b-8064-a7e6bc7b038b",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "PrimaryTouch",
+                    "type": "Value",
+                    "id": "df3f2cb4-febb-4f21-b324-68655134b0a7",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "6c47348b-c52f-44a9-bd5b-b324cc722243",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "RollDice",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "039856e7-799f-4d8b-98bd-2c5af22d8f5c",
+                    "path": "<Touchscreen>/primaryTouch/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "PrimaryTouch",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "One Modifier",
+                    "id": "75ea6ccb-3e15-4ee7-b407-f9812054bd84",
+                    "path": "OneModifier",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "PrimaryTouch",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "modifier",
+                    "id": "8d071a4a-1335-44d0-9ce0-21d06bd2f7cc",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "PrimaryTouch",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "binding",
+                    "id": "bbc42459-392f-4193-aa71-97b3abc3cdec",
+                    "path": "<Mouse>/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "PrimaryTouch",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
