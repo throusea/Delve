@@ -9,8 +9,6 @@ public class SkillController : MonoBehaviour
 
     private Button button; // 待弃用
 
-    public CombinationChecker checker;
-
     /// <summary>
     /// 释放技能
     /// </summary>

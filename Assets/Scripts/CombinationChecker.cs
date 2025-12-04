@@ -1,14 +1,10 @@
 using System.Collections.Generic;
-using TMPro;
-using UnityEditor.PackageManager;
-using UnityEngine;
-using UnityEngine.UI;
 
-public class CombinationChecker : MonoBehaviour
+public static class CombinationChecker
 {
 
     // 检查骰子组合对应的技能
-    public Skill CheckCombination(List<int> dices)
+    public static Skill CheckCombination(List<int> dices)
     {
         Skill currentSkill;
         // TEST_SKILL1
@@ -28,17 +24,5 @@ public class CombinationChecker : MonoBehaviour
         }
 
         return currentSkill;
-    }
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

@@ -9,6 +9,8 @@ public class UnitController : MonoBehaviour
     public UnitManager manager;
     public int health;
 
+    public List<SkillData> skillDataPool;
+
     public List<Skill> skillPool;  // 可用技能池
 
     public SkillController skillCtrl;
@@ -30,6 +32,8 @@ public class UnitController : MonoBehaviour
         healthSlider.value = 5;
 
         highlightImage.color = Color.red; // 初始化状态
+
+        UpdateHealthSlider();
     }
     
     void OnEnable()
@@ -69,6 +73,15 @@ public class UnitController : MonoBehaviour
         skillCtrl.SetAvailiableSkill(skill);
         // skillCtrl.UpdateButtonText();
         Debug.Log("更新角色可用技能" + $"{skill}");
+    }
+
+    public void Attack(EnemyController enemy)
+    {
+        Debug.Log($"{this.name} 攻击了 {enemy.name}！");
+        // 简单地减少敌人生命值
+
+        enemy.health -= 1;
+        enemy.UpdateHealthSlider();
     }
 
     public void OnUnitClick(InputAction.CallbackContext context)

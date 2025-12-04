@@ -11,8 +11,6 @@ public class UnitManager: MonoBehaviour
     public Action<UnitController> OnUnitSelectedEvent;
     public List<UnitController> unitCtrls;
 
-    public CombinationChecker checker;
-
     void Awake()
     {
         // register
@@ -24,7 +22,7 @@ public class UnitManager: MonoBehaviour
 
     public void HandleDiceSelectionChange(List<int> dices)
     {
-        Skill skill = checker.CheckCombination(dices);
+        Skill skill = CombinationChecker.CheckCombination(dices);
         foreach (UnitController unitCtrl in unitCtrls)
         {
             // send to unit controller

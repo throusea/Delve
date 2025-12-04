@@ -8,7 +8,6 @@ using UnityEngine.UI;
 /// <summary>
 /// 管理骰子的类。
 /// </summary>
-[RequireComponent(typeof(CombinationChecker))]
 public class DiceManager : MonoBehaviour
 {
     public Action<List<int>> OnDiceSelectionChangedEvent;
@@ -107,17 +106,12 @@ public class DiceManager : MonoBehaviour
     // 当骰子被选中状态发生变化时触发
     public void OnDiceSelectionChanged()
     {
-        // var checker = GetComponent<CombinationChecker>();
-
         List<int> dices = new();
         // DiceUI -> int
         foreach (DiceUI diceUI in selectedDiceUIs)
         {
             dices.Add(diceUI.value);
         }
-
-        // 检查当前技能组合
-        // var skill = checker.CheckCombination(dices);
 
         // 广播事件
         NotifySelectionChanged(dices);

@@ -3,8 +3,6 @@ using UnityEngine;
 
 public class TestCombinationChecker : MonoBehaviour
 {
-    public CombinationChecker checker;
-
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -18,7 +16,7 @@ public class TestCombinationChecker : MonoBehaviour
     
     void RunTest(List<int> dices, string testName)
     {
-        var res = checker.CheckCombination(dices);
+        var res = CombinationChecker.CheckCombination(dices);
 
         Debug.Log($"--- 测试: {testName} ({string.Join(", ", dices)}) ---");
         if (res.ToString() == "NULL")
